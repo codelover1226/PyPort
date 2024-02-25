@@ -1,0 +1,23 @@
+<div class="top-bar">
+    <a href="/">
+    <img src="{{ url_for('serve_image', filename='logo.png') }}" alt="Logo" class="logo">
+    </a>  
+    <button id="hamburger-button">&#9776;</button>
+    <div id="nav-overlay" class="nav-overlay">
+        <div id="nav-links">
+            <a href="/karte">Karte</a>
+            <a href="/list">Projektvorschläge</a>
+            <a href="/neuerbeitrag">Vorschlag hinzufügen</a>
+            <a href="/ueber">Über</a>
+            <a href="/profil">Profil</a>
+            {% if current_user.is_authenticated %}
+            <span class="user-info" style="margin-top: 10px;">
+            Benutzer: {{ current_user.name }}
+            </span>
+            <a href="{{ url_for('logout', next=request.path) }}"><button class="button">Abmelden</button></a>
+            {% else %}
+            <a href="{{ url_for('login', next=request.path) }}"><button class="button">Anmelden</button></a>
+            {% endif %}
+        </div>
+    </div>
+</div>

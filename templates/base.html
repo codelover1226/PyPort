@@ -1,0 +1,54 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="manifest" href="{{ url_for('serve_image', filename='site.webmanifest') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('serve_image', filename='favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('serve_image', filename='apple-touch-icon.png') }}">
+    <link rel="preload" href="{{ url_for('serve_image', filename='index_titleimage_big.webp') }}" as="image">
+    <!-- Meta tags for iOS support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Stimmungskompass">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#003056">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ og_url }}">
+    <meta property="og:title" content="{{ og_title }}">
+    <meta property="og:description" content="{{ og_description }}">
+    <meta property="og:image" content="{{ og_image }}">
+
+    <!-- Meta tag -->
+    <meta name="description" content="{{ meta_description }}">
+    <meta name="keywords" content="{{ meta_keywords }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.stimmungskompass.at/">
+    <meta property="twitter:title" content="Stimmungskompass - Eine Plattform zur Bürgerbeteiligung">
+    <meta property="twitter:description" content="Eine Plattform zur Bürgerbeteiligung. Engagiere dich für eine bessere Stadt!">
+    <meta property="twitter:image" content="https://www.stimmungskompass.at/static/twitter_card.png">
+    
+    {% block head_section %}{% endblock %}
+
+    {% block styles %}{% endblock %}
+    
+</head>
+<body>
+    <header>
+        {% block header %}{% endblock %}
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        {% block footer %}{% endblock %}
+    </footer>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

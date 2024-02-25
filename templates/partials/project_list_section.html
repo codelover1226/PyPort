@@ -1,0 +1,60 @@
+<div class="my-projects centered-text">
+  {% if paginated_projects and paginated_projects.items %} 
+  <div class="project-list" id="project-list-container">
+     {% for project in paginated_projects.items %} {% if not project.is_mapobject %}
+     <!-- Check if project is not a Notizen -->
+     <div class="project-thumbnail" id="project-{{ project.id }}">
+        <h3>
+           <strong>{{ project.name }}</strong>
+        </h3>
+        <p class="project-date"> Gepostet am: <strong>{{ project.date.strftime('%d.%m.%Y') }}</strong>, Ansichten: <strong>{{ project.view_count }}</strong>
+        </p>
+        <div class="voting-bar">
+           {% if project.upvotes > 0 %} 
+           <div class="upvotes" style="width: {{ project.upvote_percentage }}%;">
+              <span>{{ project.upvotes }} 👍 ({{ project.upvote_percentage|round(1) }}%)</span>
+           </div>
+           {% endif %} {% if project.downvotes > 0 %} 
+           <div class="downvotes" style="width: {{ project.downvote_percentage }}%;">
+              <span>{{ project.downvotes }} 👎 ({{ project.downvote_percentage|round(1) }}%)</span>
+           </div>
+           {% endif %} 
+        </div>
+        <a href="{{ url_for('project_details', project_id=project.id) }}" target="_blank">
+        <img src="{{ url_for('serve_image', filename='usersubmissions/' + project.image_file) }}" alt="{{ project.name }}" class="project-image">
+        </a>
+        <div class="project-description">{{ project.descriptionwhy|safe }}</div>
+        <!-- Admin actions for each project -->
+        <form method="POST" action="{{ url_for('admintools') }}">
+           <input type="hidden" name="project_id" value="{{ project.id }}">
+           <button type="button" onclick="deleteProject(event, {{ project.id }});" class="register-button" style="font-weight: bold;">Löschen</button>
+           <button type="button" onclick="markProjectImportant({{ project.id }}, event);" class="register-button">Als "Wichtig" markieren</button>
+           <button type="button" onclick="markProjectFeatured({{ project.id }}, event);" class="register-button">Als "Ausgewählt" markieren</button>
+           <a href="{{ url_for('project_details', project_id=project.id) }}" class="register-button" target="_blank">Anzeigen</a>
+        </form>
+     </div>
+     {% endif %} {% endfor %}
+  </div>
+  {% if not paginated_projects.items %} 
+  <p>Keine Projekte gefunden.</p>
+  {% endif %} {% endif %}
+  <!-- Pagination for Projects --> {% if paginated_projects.pages > 1 %} 
+  <nav aria-label="Project Page navigation" class="pagination-container" data-pagination-type="project">
+     <ul class="pagination">
+        {% if paginated_projects.has_prev %} 
+        <li class="page-item">
+           <a class="page-link ajax-pagination-link" href="{{ url_for('admintools', page=paginated_projects.prev_num, sort=sort, search=search_query) }}">Zurück</a>
+        </li>
+        {% endif %} {% for page in paginated_projects.iter_pages() %} 
+        <li class="page-item {{ 'active' if page == paginated_projects.page else '' }}">
+           <a class="page-link ajax-pagination-link" href="{{ url_for('admintools', page=page, sort=sort, search=search_query) }}">{{ page }}</a>
+        </li>
+        {% endfor %} {% if paginated_projects.has_next %} 
+        <li class="page-item">
+           <a class="page-link ajax-pagination-link" href="{{ url_for('admintools', page=paginated_projects.next_num, sort=sort, search=search_query) }}">Weiter</a>
+        </li>
+        {% endif %} 
+     </ul>
+  </nav>
+  {% endif %}
+</div>

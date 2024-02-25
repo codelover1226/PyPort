@@ -1,0 +1,42 @@
+<div class="my-projects centered-text">
+  {% if paginated_comments and paginated_comments.items %} 
+  <div class="comment-list" id="comment-list-container">
+     {% for comment in paginated_comments.items %} <!-- Inside your comments loop -->
+     <div class="stat-box2" id="comment-{{ comment.id }}">
+        <div class="project-description" style="font-weight:bold;">{{ comment.text }}</div>
+        <div class="comment-details" style="margin-bottom: -5px;">
+           <p style="margin-bottom: -10px;"> Projekt: <strong>
+              <a href="{{ url_for('project_details', project_id=comment.project_id) }}">
+              {{ comment.project_name }}
+              </a>
+              </strong>
+           </p>
+           <p> Autor: {{ comment.author_name }} (ID: {{ comment.author_id }}) | Datum: {{ comment.timestamp.strftime('%d.%m.%Y, %H:%M') }}
+           </p>
+        </div>
+        <button onclick="deleteComment({{ comment.id }});" class="register-button">Löschen</button>
+     </div>
+     {% endfor %} 
+  </div>
+  <!-- Pagination for Comments --> {% if paginated_comments.pages > 1 %} 
+  <nav aria-label="Comment Page navigation" class="pagination-container" data-pagination-type="comment">
+     <ul class="pagination">
+        {% if paginated_comments.has_prev %} 
+        <li class="page-item">
+           <a class="page-link ajax-pagination-link" href="{{ url_for('admintools', comment_page=paginated_comments.prev_num, comment_sort=comment_sort) }}">Zurück</a>
+        </li>
+        {% endif %} {% for page in paginated_comments.iter_pages() %} 
+        <li class="page-item {{ 'active' if page == paginated_comments.page else '' }}">
+           <a class="page-link ajax-pagination-link" href="{{ url_for('admintools', comment_page=page) }}">{{ page }}</a>
+        </li>
+        {% endfor %} {% if paginated_comments.has_next %} 
+        <li class="page-item">
+           <a class="page-link ajax-pagination-link" href="{{ url_for('admintools', comment_page=paginated_comments.next_num) }}">Weiter</a>
+        </li>
+        {% endif %} 
+     </ul>
+  </nav>
+  {% endif %} {% else %} 
+  <p>Keine Kommentare gefunden.</p>
+  {% endif %} 
+</div>

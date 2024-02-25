@@ -1,0 +1,107 @@
+<div id="custom-confirm" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.0); z-index: 10000; text-align: center;">
+    <div id="mobile-confirm" class="mobile-confirm">
+       <p class="p-mobile-confirm">Möchten Sie die Notiz hier platzieren?</p>
+       <button id="confirm-yes" class="register-button-c" style="background-color: #0e3a3a !important;">Ja</button>
+       <button id="confirm-tryagain" class="register-button-c" style="background-color: #ffa500 !important; margin-top: 10px !important;">Erneut versuchen</button>
+       <button id="confirm-no" class="register-button-c" style="background-color: #de3a3a !important; margin-top: 10px !important;">Stornieren</button>
+    </div>
+ </div>
+ <!-- Overlay for displaying the list of markers -->
+ <div id="markers-list-overlay" class="markers-sidebar">
+    <div class="scrollable-content">
+       <!-- All your filters and the list go here -->
+       <div id="category-filter"></div>
+       <div id="sort-filter"></div>
+       <div id="full-project-filter"></div>
+       <ul id="markers-list" style="margin-bottom:20px;">
+          <!-- Marker items will be added here dynamically -->
+       </ul>
+       <button id="show-more-markers" onclick="loadMoreMarkers()" style="display: none;">Mehr anzeigen</button>
+    </div>
+    <button onclick="document.getElementById('markers-list-overlay').style.display='none'" id="close-overlay-button" class="register-button-f" style="margin-top: 10px !important;">Schließen</button>
+ </div>
+ <!-- Marker Placing Overlay -->
+ <div id="marker-overlay">
+    <div id="overlay-content">
+       <div class="title-button-container">
+          <h2 class="title-imagebutton" style="font-size: 21px;">Notiz hinzufügen</h2>
+          <a href="#" id="info-link">
+          <img src="{{ url_for('serve_image', filename='infobutton.png') }}" alt="Info" class="info-image">
+          </a>
+       </div>
+       <h3 style="font-size: 16px;">
+          <a href="/neuerbeitrag" style="color: #003056; text-decoration: underline;">Hier klicken, um Projektvorschläge zu posten.</a>
+       </h3>
+       <!-- Wrapper div for the select and the textarea -->
+       <div style="width: 100%; box-sizing: border-box; text-align: center;">
+          <h2 style="font-size: 21px;">1. Kategorie auswählen:</h2>
+          <select id="marker-category" onchange="updateMarkerCategoryDescription()" style="width: 100%; box-sizing: border-box; text-align: center; border: 1px solid black;">
+             <option value="Transport">Transport</option>
+             <option value="Öffentliche Plätze">Öffentliche Plätze</option>
+             <option value="Umwelt">Umwelt</option>
+             <option value="Verwaltung">Verwaltung</option>
+             <option value="Kultur">Kultur</option>
+             <option value="Bildung">Bildung</option>
+             <option value="Gesundheit">Gesundheit</option>
+             <option value="Sport">Sport</option>
+             <option value="Andere">Andere</option>
+          </select>
+          <br>
+          <br>
+          <h2 style="font-size: 21px;">Die ausgewählte Kategorie betrifft Themen wie:</h2>
+          <h3 id="marker-category-description" style="color:#003056; font-size: 16px;"></h3>
+          <!-- Description will appear here -->
+          <h2>2. Beschreiben Sie die Umstände:</h2>
+          <textarea id="marker-description" rows="7" style="width: 100%; box-sizing: border-box; text-align: left; border: 1px solid black; font-size: 16px; font-family: 'Roboto', sans-serif;" placeholder="Was beschäftigt Sie?"></textarea>
+       </div>
+       <br>
+       <h3 style="font-size: 16px" id="limit-info">limit info here</h3>
+       <div class="button-container">
+          <button id="add-marker-button" onclick="postMarker()" class="register-button">Hinzufügen</button>
+       </div>
+    </div>
+ </div>
+ <div>
+    <div id="mobileCategoryOverlay"></div>
+    <div id="sidebar-mobileheader" style="display: none;">
+       <h3 class="appear-on-mobiledisabled resistant-h3" style="display: none; color: white; text-align: center; margin-top: 5px;"> Wie stehen Sie zu den Orten in Ihrer Gemeinde? </h3>
+       <h3 class="appear-on-mobiledisabled resistant-h3" style="display: none; color: white; text-align: center; margin-top: -12px; margin-bottom: 7px"> Lassen Sie es uns auf dieser Karte wissen! </h3>
+    </div>
+    <div id="map">
+       <a href="#" id="info-link2">
+       <img src="{{ url_for('serve_image', filename='infobutton2.png') }}" alt="Info" class="info-image2" style="z-index: 1002 !important;">
+       </a>
+       <!-- Inside the map div -->
+    </div>
+    <?php MAP END ?> <?php SIDEBAR BODY START ?> 
+    <div id="sidebar">
+       <h3 class="hide-on-mobile resistant-h3" style="display: none; text-align: center; margin-top: 5px;"> Wie stehen Sie zu den Orten in Ihrer Gemeinde? </h3>
+       <h3 class="hide-on-mobile resistant-h3" style="display: none; text-align: center; margin-top: -12px; margin-bottom: 7px"> Lassen Sie es uns auf dieser Karte wissen! </h3>
+       <?php WEBSITE DESCRIPTION END ?>
+       <!-- SMALL OPTIONS MENU TOP START -->
+       <div class="smalloptionsmenutop" style="display: flex; align-items: center; justify-content: center;">
+          <div class="left-container">
+             <!-- This button shows the user a list of existing pins -->
+          </div>
+          <div class="button-s" id="buttonS" onclick="addAndRemoveClass()" style="width: auto; height: auto; padding: 15px; display:none;">
+             <h3> Wie funktioniert's? </h3>
+          </div>
+       </div>
+       <?php CITY LOGO START ?> <img class="hide-on-mobile resistant-image" id="overlay-image" src="static/overlay.jpg" style="max-width: 97%; height: auto; display: block; margin-left:auto; margin-right:auto; margin-top: 3px; margin-bottom: 20px; border-radius: 30px; max-height: 368px;" /> <?php CITY LOGO END ?> 
+       <div class="button-container">
+          <button id="open-overlay" class="register-button-m" onclick="openMarkerOverlay(event)" style="margin-bottom: 10px">Hinzufügen</button>
+       </div>
+       <div class="button-container">
+          <button id="show-markers-btn" class="register-button-m">Liste anzeigen</button>
+       </div>
+       <div class="button-container">
+          <button id="hideNonMapMarkers" class="register-button-m" style="margin-bottom: 10px; margin-top: 10px !important;">Nur Projektvorschläge anzeigen</button>
+       </div>
+       <h3 style="display: block; text-align: center; margin-top: 5px;"> Klicken Sie zum ein- und ausblenden. </h3>
+       <div id="category-toggle-buttons">
+          <!-- Buttons will be added here dynamically -->
+       </div>
+    </div>
+    <?php CATEGORIES PULL END ?>
+ </div>
+ <?php SIDEBAR BODY END ?>

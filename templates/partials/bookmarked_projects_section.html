@@ -1,0 +1,35 @@
+<!-- bookmarked_projects_section.html -->
+<div class="bookmarked-projects centered-text">
+   <h2>Sie haben <span id="num-bookmarks" style="color: #003056;">{{ bookmarked_projects|length }} Lesezeichen</span> gespeichert. </h2>
+   <div class="project-list">
+      {% if bookmarked_projects %} {% for project in bookmarked_projects %} 
+      <div class="project-thumbnail" id="project-thumbnail-{{ project.id }}">
+         <h3>
+            <strong>{{ project.name }}</strong>
+         </h3>
+         <p class="project-date"> Gepostet am: <strong>{{ project.date.strftime('%d.%m.%Y') }}</strong>, Ansichten: <strong>{{ project.view_count }}</strong>
+         </p>
+         <div class="voting-bar">
+            {% if project.upvotes > 0 %} 
+            <div class="upvotes" style="width: {{ project.upvote_percentage }}%;">
+               <span>{{ project.upvotes }} 👍 ({{ project.upvote_percentage|round(1) }}%)</span>
+            </div>
+            {% endif %} {% if project.downvotes > 0 %} 
+            <div class="downvotes" style="width: {{ project.downvote_percentage }}%;">
+               <span>{{ project.downvotes }} 👎 ({{ project.downvote_percentage|round(1) }}%)</span>
+            </div>
+            {% endif %} 
+         </div>
+         <a href="{{ url_for('project_details', project_id=project.id) }}">
+         <img src="{{ url_for('serve_image', filename='usersubmissions/' + project.image_file) }}" alt="{{ project.name }}">
+         </a>
+         <button onclick="removeBookmark(event, {{ project.id }})" class="register-button" style="font-weight: bold; display: inline-block; width: auto; padding: 5px 10px;">Lesezeichen entfernen</button>
+         <script>
+            //console.log("Bookmarked project loaded: {{ project.name }}");
+         </script>
+      </div>
+      {% endfor %} {% else %} 
+      <p>Keine Lesezeichen vorhanden.</p>
+      {% endif %} 
+   </div>
+</div>

@@ -1,0 +1,17 @@
+{% extends  'base.html' %}
+
+{% block head_section %} 
+<title>Stimmungskompass DEMO</title> 
+<link rel="stylesheet" href="{{ url_for('serve_image', filename='list.css') }}">
+{% endblock %}
+
+{% block header %}
+    {% include 'partials/header/index.html' %}
+{% endblock %}
+{% block content %}
+    {%  include '/list/list.html' %}
+{% endblock %}
+{% block footer %}
+    {% include 'partials/footer/index.html' %}
+{% endblock %}
+{% block scripts %} {% include 'list/index' %} {% endblock %}

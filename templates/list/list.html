@@ -1,0 +1,164 @@
+<div class="page-container">
+    <div class="content-wrapper">
+        <div id="video-overlay" class="video-overlay" style="display:none;">
+            <iframe id="youtube-iframe" width="560" height="315" src="https://www.youtube.com/embed/uolKHGe9c4Y?si=kMLiCkfo10E" frameborder="0" allowfullscreen></iframe>
+            <div id="replay-container" style="display: none;"></div>
+            <!-- Container for replay image -->
+            <button onclick="closeVideoOverlay()" class="register-button">Schließen</button>
+        </div>
+        <button id="hamburger-button-filter">&#9776; Filtern</button>
+        <!-- Filtern Bar -->
+        <div class="filter-bar">
+            <form id="filter-form" action="{{ url_for('list_view') }}" method="get" style="display: flex; align-items: center;">
+                <div class="filter-item">
+                    <label for="search">Suchen:</label>
+                    <input type="text" id="search" name="search" value="{{ request.args.get('search', '') }}" placeholder="Nach Titel suchen...">
+                </div>
+                <div class="filter-item">
+                    <label for="category">Kategorie:</label>
+                    <select name="category" id="category">
+                        <option value="">Alle Kategorien</option>
+                        {% set current_category = request.args.get('category', '') %}
+                        <option value="Transport" {% if current_category == 'Transport' %}selected{% endif %}>Transport</option>
+                        <option value="Öffentliche Plätze" {% if current_category == 'Öffentliche Plätze' %}selected{% endif %}>Öffentliche Plätze</option>
+                        <option value="Umwelt" {% if current_category == 'Umwelt' %}selected{% endif %}>Umwelt</option>
+                        <option value="Verwaltung" {% if current_category == 'Verwaltung' %}selected{% endif %}>Verwaltung</option>
+                        <option value="Kultur" {% if current_category == 'Kultur' %}selected{% endif %}>Kultur</option>
+                        <option value="Bildung" {% if current_category == 'Bildung' %}selected{% endif %}>Bildung</option>
+                        <option value="Gesundheit" {% if current_category == 'Gesundheit' %}selected{% endif %}>Gesundheit</option>
+                        <option value="Sport" {% if current_category == 'Sport' %}selected{% endif %}>Sport</option>
+                        <option value="Andere" {% if current_category == 'Andere' %}selected{% endif %}>Andere</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="sort">Sortieren:</label>
+                    <select name="sort" id="sort">
+                    <option value="highest_views" {% if request.args.get('sort', '') == 'highest_views' %}selected{% endif %}>Meistgesehene zuerst</option>
+                    <option value="highest" {% if request.args.get('sort', '') == 'highest' %}selected{% endif %}>Höchste Bewertung zuerst</option>
+                    <option value="newest" {% if request.args.get('sort', '') == 'newest' %}selected{% endif %}>Neuester Beitrag zuerst</option>
+                    <option value="oldest" {% if request.args.get('sort', '') == 'oldest' %}selected{% endif %}>Ältester Beitrag zuerst</option>
+                    </select>
+                </div>
+                <button type="submit" class="filter-button">Filtern</button>
+                <a href="#" id="info-link" style="height: 100%;">
+                    <!-- Set the height to 100% -->
+                    <img src="{{ url_for('serve_image', filename='infobutton2.png') }}" alt="Info" class="info-image" style="margin-left: 20px">
+                </a>
+            </form>
+        </div>
+        <div id="filter-overlay" class="nav-overlay">
+            <form id="filter-form-mobile" action="{{ url_for('list_view') }}" method="get">
+                <div class="info-link-container">
+                    <a href="#" id="info-link-mobile" class="info-link">
+                    <img src="{{ url_for('serve_image', filename='infobutton2.png') }}" alt="Info" class="info-image">
+                    </a>
+                </div>
+                <div class="filter-item">
+                    <label for="search">Suchen:</label>
+                    <input type="text" id="search" name="search" value="{{ request.args.get('search', '') }}" placeholder="Suche nach Projektvorschläge...">
+                </div>
+                <div class="filter-item">
+                    <label for="category">Kategorie:</label>
+                    <select name="category" id="category">
+                        <option value="">Alle Kategorien</option>
+                        {% set current_category = request.args.get('category', '') %}
+                        <option value="Transport" {% if current_category == 'Transport' %}selected{% endif %}>Transport</option>
+                        <option value="Öffentliche Plätze" {% if current_category == 'Öffentliche Plätze' %}selected{% endif %}>Öffentliche Plätze</option>
+                        <option value="Umwelt" {% if current_category == 'Umwelt' %}selected{% endif %}>Umwelt</option>
+                        <option value="Verwaltung" {% if current_category == 'Verwaltung' %}selected{% endif %}>Verwaltung</option>
+                        <option value="Kultur" {% if current_category == 'Kultur' %}selected{% endif %}>Kultur</option>
+                        <option value="Bildung" {% if current_category == 'Bildung' %}selected{% endif %}>Bildung</option>
+                        <option value="Gesundheit" {% if current_category == 'Gesundheit' %}selected{% endif %}>Gesundheit</option>
+                        <option value="Sport" {% if current_category == 'Sport' %}selected{% endif %}>Sport</option>
+                        <option value="Andere" {% if current_category == 'Andere' %}selected{% endif %}>Andere</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="sort">Sortieren:</label>
+                    <select name="sort" id="sort">
+                    <option value="highest_views" {% if request.args.get('sort', '') == 'highest_views' %}selected{% endif %}>Meistgesehene zuerst</option>
+                    <option value="highest" {% if request.args.get('sort', '') == 'highest' %}selected{% endif %}>Höchste Bewertung zuerst</option>
+                    <option value="newest" {% if request.args.get('sort', '') == 'newest' %}selected{% endif %}>Neuester Beitrag zuerst</option>
+                    <option value="oldest" {% if request.args.get('sort', '') == 'oldest' %}selected{% endif %}>Ältester Beitrag zuerst</option>
+                    </select>
+                </div>
+                <button type="submit" class="filter-button">Filtern</button>
+            </form>
+        </div>
+        <div class="projects-header">
+            <h1>Eingebrachte Projektvorschläge</h1>
+            {% if projects %}
+            <p>Klicken Sie auf einen Vorschlag, nähere Informationen zu sehen.</p>
+            {% endif %}
+        </div>
+        <div class="project-list">
+            {% if projects %}
+            {% for project in projects %}
+            <div class="project-thumbnail" data-project-id="{{ project.id }}" onclick="showOverlay('{{ project.name }}', '{{ project.description }}', '{{ project.image_file }}', '{{ project.full_description }}', '{{ project.author }}', '{{ project.date.strftime('%Y-%m-%d') }}')">
+                <h2>{{ project.name }}</h2>
+                <p class="project-date">
+                    Gepostet am: <strong>{{ project.date.strftime('%d.%m.%Y') }}</strong>,
+                    Ansichten: <strong>{{ project.view_count }}</strong>
+                </p>
+                <!-- Voting Bar -->
+                <div class="voting-bar">
+                    {% if project.upvotes > 0 %}
+                    <div class="upvotes" style="width: {{ project.upvote_percentage }}%;">
+                        <span>{{ project.upvotes }} 👍 ({{ project.upvote_percentage|round(1) }}%)</span>
+                    </div>
+                    {% endif %}
+                    {% if project.downvotes > 0 %}
+                    <div class="downvotes" style="width: {{ project.downvote_percentage }}%;">
+                        <span>{{ project.downvotes }} 👎 ({{ project.downvote_percentage|round(1) }}%)</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <img src="{{ url_for('serve_image', filename='usersubmissions/' + project.image_file) }}" alt="{{ project.name }}">
+                <p>{{ project.description }}</p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="text-align: center;">Keine Ergebnisse gefunden. Machen Sie selbst einen Vorschlag!</p>
+            {% endif %}
+        </div>
+    </div>
+    {% if pagination.pages > 1 %}
+    <div class="pagination-text" style="text-align: center; margin-top: 10px; margin-bottom: 0;">
+        <strong>Seiten:</strong>
+    </div>
+    <nav aria-label="Page navigation" style="margin-top: 0;">
+        <ul class="pagination">
+            {% for page in pagination.iter_pages() %}
+            {% if page %}
+            {% if page != pagination.page %}
+            <li class="page-item"><a class="page-link" href="{{ url_for('list_view', page=page) }}">{{ page }}</a></li>
+            {% else %}
+            <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+            {% endif %}
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+    {% endif %}
+    <!-- Overlay -->
+    <div class="overlay" id="overlay">
+        <div class="overlay-content">
+            <span class="close-btn" onclick="closeOverlay()">&#10006;</span>
+            <h2 id="overlay-title"></h2>
+            <img id="overlay-image" src="" alt="">
+            <p id="overlay-description"></p>
+            <p>Full Description: <span id="overlay-full-description"></span></p>
+            <p>Author: <span id="overlay-author"></span></p>
+            <p>Date: <span id="overlay-date"></span></p>
+        </div>
+    </div>
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+</div>
+</div>

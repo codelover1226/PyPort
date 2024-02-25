@@ -1,0 +1,45 @@
+<div class="user-search-container" style="margin-bottom: 20px; margin-top:-20px;">
+  <label for="searchUserByName" style="font-weight: bold;">Sortieren nach Name:</label>
+  <input type="text" id="searchUserByName" placeholder="Sortieren nach Name" onkeyup="searchUsers()" style="margin-top:20px; border-radius: 20px; font-size: 16px; padding: 10px; background-color: #ffffff; border: 1px solid #ccc; outline: none; cursor: pointer;">
+  <label for="searchUserById" style="font-weight: bold;">Sortieren nach ID:</label>
+  <input type="text" id="searchUserById" placeholder="Sortieren nach ID" onkeyup="searchUsers()" style="margin-top:20px; border-radius: 20px; font-size: 16px; padding: 10px; background-color: #ffffff; border: 1px solid #ccc; outline: none; cursor: pointer;">
+</div>
+<div class="project-list" id="user-list-container">
+  {% if paginated_users.items %} {% for user in paginated_users.items %} 
+  <div class="user-thumbnail">
+     <h3>
+        <strong>{{ user.name }} (ID: {{ user.id }})</strong>
+     </h3>
+     <div class="project-details"> Projektvorschläge erstellt: {{ user.project_count }}
+        <br> Notizen erstellt: {{ user.map_object_count }}
+        <br> Kommentare gepostet: {{ user.comment_count }}
+        <br> Konto erstellt am: {{ user.account_creation.strftime('%d.%m.%Y, %H:%M:%S') }}
+     </div>
+     <form method="POST" action="{{ url_for('delete_user') }}" onsubmit="return confirmUserDeletion()">
+        <input type="hidden" name="user_id" value="{{ user.id }}">
+        <button type="submit" class="register-button">Löschen</button>
+     </form>
+  </div>
+  {% endfor %}
+  <!-- Pagination for Users --> {% if paginated_users.pages > 1 %} 
+  <nav aria-label="User Page navigation" class="pagination-container" data-pagination-type="user">
+     <ul class="pagination">
+        {% if paginated_users.has_prev %} 
+        <li class="page-item">
+           <a class="page-link ajax-pagination-link" href="{{ url_for('admintools', user_page=paginated_users.prev_num) }}">Zurück</a>
+        </li>
+        {% endif %} {% for page in paginated_users.iter_pages() %} 
+        <li class="page-item {{ 'active' if page == paginated_users.page else '' }}">
+           <a class="page-link ajax-pagination-link" href="{{ url_for('admintools', user_page=page) }}">{{ page }}</a>
+        </li>
+        {% endfor %} {% if paginated_users.has_next %} 
+        <li class="page-item">
+           <a class="page-link ajax-pagination-link" href="{{ url_for('admintools', user_page=paginated_users.next_num) }}">Weiter</a>
+        </li>
+        {% endif %} 
+     </ul>
+  </nav>
+  {% endif %} {% else %} 
+  <p>Keine Benutzer gefunden.</p>
+  {% endif %}
+</div>

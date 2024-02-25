@@ -1,0 +1,55 @@
+<!-- projects_section.html -->
+<div class="my-projects centered-text">
+  <div class="project-list">
+     {% if project_pagination.items %} {% for project in project_pagination.items %} {% if not project.is_mapobject %} 
+     <div class="project-thumbnail">
+        <h3>
+           <strong>{{ project.name }}</strong>
+        </h3>
+        <p class="project-date"> Gepostet am: <strong>{{ project.date.strftime('%d.%m.%Y') }}</strong>, Ansichten: <strong>{{ project.view_count }}</strong>
+        </p>
+        <div class="voting-bar">
+           {% if project.upvotes > 0 %} 
+           <div class="upvotes" style="width: {{ project.upvote_percentage }}%;">
+              <span>{{ project.upvotes }} 👍 ({{ project.upvote_percentage|round(1) }}%)</span>
+           </div>
+           {% endif %} {% if project.downvotes > 0 %} 
+           <div class="downvotes" style="width: {{ project.downvote_percentage }}%;">
+              <span>{{ project.downvotes }} 👎 ({{ project.downvote_percentage|round(1) }}%)</span>
+           </div>
+           {% endif %} 
+        </div>
+        <a href="{{ url_for('project_details', project_id=project.id) }}" target="_blank">
+        <img src="{{ url_for('serve_image', filename='usersubmissions/' + project.image_file) }}" alt="{{ project.name }}" class="project-image">
+        </a>
+        <div class="project-description">{{ project.descriptionwhy|safe }}</div>
+        <form data-project-id="{{ project.id }}" onsubmit="deleteProject(event, {{ project.id }});">
+           <input type="submit" class="register-button" style="font-weight: bold;" value="Löschen">
+        </form>
+     </div>
+     {% endif %} {% endfor %}
+     <!-- Pagination for Projects --> {% if project_pagination.pages > 1 %} 
+     <nav aria-label="Page navigation" class="pagination-container">
+        <ul class="pagination">
+           <!-- Zurück Page --> {% if project_pagination.has_prev %} 
+           <li class="page-item">
+              <a class="page-link" href="{{ url_for('profil', project_page=project_pagination.prev_num, map_object_page=map_object_page, comment_page=comment_page) }}">Zurück</a>
+           </li>
+           {% endif %}
+           <!-- Page Numbers --> {% for page in project_pagination.iter_pages() %} 
+           <li class="page-item {{ 'active' if page == project_pagination.page else '' }}">
+              <a class="page-link" href="{{ url_for('profil', project_page=page, map_object_page=map_object_page, comment_page=comment_page) }}">{{ page }}</a>
+           </li>
+           {% endfor %}
+           <!-- Weiter Page --> {% if project_pagination.has_next %} 
+           <li class="page-item">
+              <a class="page-link" href="{{ url_for('profil', project_page=project_pagination.next_num, map_object_page=map_object_page, comment_page=comment_page) }}">Weiter</a>
+           </li>
+           {% endif %}
+        </ul>
+     </nav>
+     {% endif %} {% else %} 
+     <p></p>
+     {% endif %}
+  </div>
+</div>
