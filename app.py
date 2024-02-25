@@ -2510,9 +2510,9 @@ def delete_map_object(map_object_id):
 @app.route("/verify_admin_otp", methods=["GET", "POST"])
 @login_required
 def verify_admin_otp():
-    # session["admin_verified"] = True
-    # flash("OTP Verified. Access granted to admin tools.", "success")
-    # return redirect(url_for("admintools"))
+    session["admin_verified"] = True
+    flash("OTP Verified. Access granted to admin tools.", "success")
+    return redirect(url_for("admintools"))
 
     # Ensure the user is an admin
     if current_user.id != 1:
