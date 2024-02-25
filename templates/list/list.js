@@ -1,4 +1,3 @@
-<script>
 function openModal(projectId) {
     // AJAX request to get project details
     fetch(`/project/${projectId}`)
@@ -277,4 +276,3 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-</script>

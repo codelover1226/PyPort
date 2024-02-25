@@ -30,10 +30,17 @@
     <meta property="twitter:title" content="Stimmungskompass - Eine Plattform zur Bürgerbeteiligung">
     <meta property="twitter:description" content="Eine Plattform zur Bürgerbeteiligung. Engagiere dich für eine bessere Stadt!">
     <meta property="twitter:image" content="https://www.stimmungskompass.at/static/twitter_card.png">
-    
+    <div id="ios-install-prompt" style="display:none;">
+        <p>Stimmungskompass App verfügbar:</p>
+        <p>Tippen Sie auf <img src="{{ url_for('serve_image', filename='share-icon.png') }}" alt="Teilen-Symbol">, dann "Zum Home-Bildschirm".</p>
+        <button id="close-prompt">Schließen</button>
+     </div>
     {% block head_section %}{% endblock %}
-
-    {% block styles %}{% endblock %}
+    <style>
+        {% block styles %}
+            /* Your dynamic CSS styles here */
+        {% endblock %}
+    </style>
     
 </head>
 <body>
@@ -48,7 +55,8 @@
     <footer>
         {% block footer %}{% endblock %}
     </footer>
-    
-    {% block scripts %}{% endblock %}
+    <script>
+      {% block scripts %}{% endblock %}
+    </script>
 </body>
 </html>
