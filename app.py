@@ -72,7 +72,7 @@ import time
 import threading
 from io import StringIO
 import random
-
+from flask_caching import Cache
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -89,6 +89,7 @@ print("Twilio Ihre Handynummer:", twilio_number)
 
 # Initialize the Flask app
 app = Flask(__name__)
+cache = Cache(app)
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1
 )
@@ -101,6 +102,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project_voting.db"
 app.config[
     "UPLOAD_FOLDER"
 ] = "static/usersubmissions"  # Specify the folder where uploaded files will be saved
+
+app.config['CACHE_TYPE'] = 'simple'  # Use SimpleCache
+app.config['CACHE_DEFAULT_TIMEOUT'] = 300  # Default cache timeout (in seconds)
+
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -1151,6 +1156,7 @@ def download_images():
 
 
 @app.route("/")
+@cache.cached(timeout=60)
 def index():
     projects = Project.query.all()
     featured_projects = Project.query.filter_by(is_featured=True).all()
@@ -1526,6 +1532,7 @@ def favicon():
 
 
 @app.route("/karte")
+@cache.cached(timeout=60)
 def karte():
     # Fetch your projects data from the database or any source
     ip_address = request.remote_addr
@@ -1660,6 +1667,7 @@ def service_worker():
 
 @app.route("/list")
 @app.route("/list/pages/<int:page>")
+@cache.cached(timeout=60)
 def list_view(page=1):
     per_page = 50  # Number of projects per page
     query = Project.query.filter(Project.is_mapobject != True)
@@ -2058,6 +2066,7 @@ def delete_map_objects_by_date():
 
 
 @app.route("/admintools", methods=["GET", "POST"])
+@cache.cached(timeout=60)
 @login_required
 def admintools():
     # Check if the user is the admin

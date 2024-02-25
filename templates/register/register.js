@@ -8,12 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }).then(response => response.json()).then(data => {
         if (data.success) {
           // Clear the form and display OTP input field
-          form.innerHTML = ' < input type = "text"
-          name = "otp"
-          placeholder = "Passwort eingeben"
-          required > ' +
-          ' < button type = "submit"
-          class = "button" > Passwort bestätigen < /button>';
+          form.innerHTML = ' < input type = "text" name = "otp" placeholder = "Passwort eingeben" required > ' + ' < button type = "submit" class = "button" > Passwort bestätigen < /button>';
           // Add event listener for OTP submission
           form.onsubmit = function(event) {
             event.preventDefault();

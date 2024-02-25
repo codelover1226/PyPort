@@ -1,4 +1,3 @@
-
 .overlay-button {
 border-radius: 30px;
 padding: 15px;
@@ -410,7 +409,7 @@ overflow-y: auto;
 /* CSS for sidebar visibility toggle */
 #map.sidebar-visible {
 /* Adjust the following styles according to your layout */
-width: calc(100% - 300px) !ui;
+width: calc(100% - 300px);
 /* Assuming the sidebar width is 300px */
 /* Andere styles if necessary */
 }
@@ -621,7 +620,6 @@ margin-right: auto;
 margin-top: 3px;
 margin-bottom: 8px;
 border-radius: 30px;
-"
 }
 /* CITY PICTURE CSS END */
 /* LEAFLET MAP PILL CSS */
@@ -879,7 +877,7 @@ align-items: center;
 .key-div {
 margin: 0 3px;
 }
-}
+
 /* Individual icon divs */
 .lightswitch-div,
 .key-div,
@@ -1163,7 +1161,7 @@ font-size: 25px;
 /* Consistent font size with the pill */
 }
 .hidden {
-display: none !important; // !important to override any Andere display property
+display: none !important;
 }
 #popup-overlay {
 display: none;
@@ -1308,7 +1306,7 @@ font-size: 18px !important;
 /* Color for light mode */
 --outline-hover-color-dark: white;
 /* Outline color for dark mode */
---leaflet-control-layers-before-bg': url("static/mapicon2b.png");
+--leaflet-control-layers-before-bg: url("static/mapicon2b.png");
 --outline-hover-color-light: black;
 /* Outline color for light mode */
 --popup-bg-color-light: rgba(244, 244, 237, 1);
