@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block head_section %}
+    <title>Login</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+{% endblock %}
+
+{% block styles %}
+{% include 'login/login.css' %}
+{% endblock %}
+
+{% block content %}
+{% include 'login/login.html' %}
+{% endblock %}
+
+{% block scripts %}
+{% include 'login/login.js' %}
+{% endblock %}
+

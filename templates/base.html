@@ -8,6 +8,7 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('serve_image', filename='favicon.ico') }}">
     <link rel="apple-touch-icon" href="{{ url_for('serve_image', filename='apple-touch-icon.png') }}">
     <link rel="preload" href="{{ url_for('serve_image', filename='index_titleimage_big.webp') }}" as="image">
+    
     <!-- Meta tags for iOS support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Stimmungskompass">
@@ -30,11 +31,8 @@
     <meta property="twitter:title" content="Stimmungskompass - Eine Plattform zur Bürgerbeteiligung">
     <meta property="twitter:description" content="Eine Plattform zur Bürgerbeteiligung. Engagiere dich für eine bessere Stadt!">
     <meta property="twitter:image" content="https://www.stimmungskompass.at/static/twitter_card.png">
-    <div id="ios-install-prompt" style="display:none;">
-        <p>Stimmungskompass App verfügbar:</p>
-        <p>Tippen Sie auf <img src="{{ url_for('serve_image', filename='share-icon.png') }}" alt="Teilen-Symbol">, dann "Zum Home-Bildschirm".</p>
-        <button id="close-prompt">Schließen</button>
-     </div>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    
     {% block head_section %}{% endblock %}
     <style>
         {% block styles %}
@@ -44,6 +42,12 @@
     
 </head>
 <body>
+    <div id="video-overlay" class="video-overlay" style="display:none;">
+    <iframe id="youtube-iframe" width="560" height="315" src="https://www.youtube.com/embed//N2u47YzgFv4?" frameborder="0" allowfullscreen></iframe>
+    <div id="replay-container" style="display: none;"></div> <!-- Container for replay image -->
+    <button onclick="closeVideoOverlay()" class="register-button">Schließen</button>
+</div>
+
     <header>
         {% block header %}{% endblock %}
     </header>

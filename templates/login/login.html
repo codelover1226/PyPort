@@ -1,0 +1,34 @@
+<div class="logo-container" onclick="redirectToIndex()">
+    <a href="/">
+      <img src="{{ url_for('serve_image', filename='logo.png') }}" alt="Logo" class="logo">
+    </a>
+  </div>
+  <div class="container">
+    <!-- Left side - Login Section -->
+    <div class="login-section">
+      <div style="text-align: center !important;">
+        <h2>Melden Sie sich ein, um Beiträge zu posten.</h2>
+      </div>
+      <a href="{{ url_for('google_login') }}" class="button">Mit Google anmelden</a>
+      <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" style="display:none"></div>
+      <button id="toggle-form-btn" class="register-button" style="font-weight:bold">Mit Handynummer anmelden</button>
+      <div class="login-form" id="login-form" style="display: none;">
+        <form action="{{ url_for('login', next=next) }}" method="post">
+          <input type="text" name="username_or_phone" placeholder="Ihre Handynummer" required>
+          <input type="password" name="password" placeholder="Passwort" required>
+          <button type="submit" class="register-button" style="font-weight: bold; margin-top: 0px;">Anmelden</button>
+          <a href="/register" class="register-button">Registrieren</a>
+          <a href="{{ url_for('password_recovery') }}" class="register-button">Passwort zurücksetzen</a>
+        </form>
+      </div>
+      <div class="register-section">
+        <p>Haben Sie noch kein Konto?</p>
+        <p>Registrieren Sie sich, um beizutragen!</p>
+        <p>Sie benötigen ein Konto, um Projektvorschläge zu machen, Abzustimmen oder Kommentare zu schreiben.</p>
+      </div>
+    </div>
+    <!-- Right side - Cover Image Section -->
+    <div class="cover-section">
+      <img src="{{ url_for('serve_image', filename='login_titleimage.png') }}" alt="Cover Image" class="cover-image">
+    </div>
+  </div>

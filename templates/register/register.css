@@ -1,0 +1,343 @@
+
+body {
+    font-family: MaisonNeue, Segoe UI, Helvetica Neue, -apple-system, system-ui, BlinkMacSystemFont, Roboto, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+    background-color: #f5f1e4;
+    color: black;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    /* Center content */
+    display: flex;
+    flex-direction: column;
+    /* Stack content vertically */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.logo-container {
+    background-color: #003056;
+    /* Dark blue background */
+    border-radius: 80px;
+    /* Pill shape */
+    display: inline-flex;
+    justify-content: center;
+    margin-top: 10px !important;
+    /* 4px margin on all sides */
+    align-items: center;
+    margin-bottom: 50px;
+    padding: 5px 10px;
+    /* Adjust as needed */
+    cursor: pointer;
+    /* Change cursor to indicate clickable */
+    transition: width 0.3s ease;
+    /* Smooth transition for scaling */
+}
+
+.logo-container:hover {
+    transform: scale(1.005);
+    /* Enlarge on hover */
+    padding: 5px;
+    /* Adjust padding if needed */
+}
+
+.logo {
+    max-width: 500px;
+    /* Adjust the size of the logo as needed */
+    height: auto;
+    /* Maintain aspect ratio */
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    align-items: flex-start;
+    /* Align the top of the sections */
+}
+
+.login-form {
+    max-width: 500px;
+    /* Adjust based on preference */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Align items to the left */
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    background-color: white;
+    border: solid #003056;
+    border-radius: 30px;
+    padding: 30px 25px;
+    margin-bottom: 10px;
+    width: 100%;
+    /* Full width of the container */
+    box-sizing: border-box;
+    /* Include padding in width calculation */
+    font-size: 18px;
+    /* Increased font size */
+}
+
+.login-section h1 {
+    text-align: left;
+    /* Align the heading to the left */
+    margin-left: 20px;
+    /* Adjust as needed for proper alignment */
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    align-items: stretch;
+    /* Change to stretch to fill the container height */
+}
+
+.login-section,
+.cover-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center items horizontally in both sections */
+}
+
+.button:hover,
+.register-button:hover {
+    background-color: #004080;
+    /* Lighten up color on hover - adjust as needed */
+    transform: scale(1.005);
+    /* Scale up on hover */
+}
+
+.cover-section {
+    justify-content: center;
+    /* Center items vertically */
+    text-align: right;
+    /* Align text to the right */
+}
+
+.cover-image {
+    max-width: 100%;
+    height: 500px;
+    /* Keep height as 400px */
+    border-radius: 30px;
+    object-fit: cover;
+    /* Adjusts image to fit the div */
+    margin-bottom: 20px;
+    /* Space between image and text */
+    margin-left: 20px;
+}
+
+.button,
+.register-button {
+    background-color: #003056;
+    /* Example color */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 15px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    width: 100%;
+    /* Full width */
+    box-sizing: border-box;
+    /* Include padding in width */
+}
+
+.register-section {
+    text-align: center;
+    margin-top: 0;
+    /* Space above the section */
+}
+
+.register-section p {
+    margin: 5px 0;
+    /* Spacing for paragraph and undertitle */
+}
+
+.login-form {
+    max-width: 500px;
+    /* Adjust based on preference */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Align items to the left */
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    background-color: white;
+    border: solid #003056;
+    border-radius: 30px;
+    padding: 30px 25px;
+    margin-bottom: 10px;
+    width: 100%;
+    /* Full width of the container */
+    box-sizing: border-box;
+    /* Include padding in width calculation */
+}
+
+@media screen and (max-width: 480px) {
+    .logo-container {
+    width: 80%;
+    /* Reduce the width to 80% of the screen size */
+    margin: 10px auto;
+    /* Add more margin to the top and bottom */
+    }
+
+    .logo {
+    max-width: 100%;
+    /* Ensure the logo fits within the container */
+    height: auto;
+    /* Maintain aspect ratio */
+    }
+}
+
+/* Existing styles... */
+@media screen and (max-width: 768px) {
+    .register-section {
+    text-align: center;
+    margin-top: 0px;
+    /* Space above the section */
+    }
+
+    .logo {
+    max-width: 300px !important;
+    /* Ensure the logo fits within the container */
+    height: auto;
+    /* Maintain aspect ratio */
+    }
+
+    .container {
+    flex-direction: column;
+    /* Stack content vertically */
+    }
+
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+    padding: 5px 10px;
+    }
+
+    .button,
+    .register-button {
+    padding: 10px 20px;
+    }
+
+    .cover-image {
+    display: none;
+    margin: auto;
+    margin-bottom: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    body {
+    font-size: 14px;
+    }
+
+    .logo-container {
+    width: auto;
+    /* Adjust to fit content */
+    margin: 0 auto;
+    /* Center horizontally */
+    padding: 5px;
+    /* Less padding for smaller screens */
+    }
+
+    .logo {
+    max-width: 100%;
+    /* Ensure the logo is not wider than its container */
+    }
+
+    .login-form input[type="text"],
+    .login-form input[type="password"] {
+    padding: 5px 10px;
+    }
+
+    .button,
+    .register-button {
+    font-size: 14px;
+    padding: 8px 15px;
+    }
+
+    .cover-image {
+    display: none;
+    height: 200px;
+    }
+}
+
+.form-section input[type="text"],
+.form-section input[type="password"],
+.form-section input[type="date"],
+.form-section input[type="email"] {
+    background-color: white;
+    border: solid #003056;
+    border-radius: 30px;
+    padding: 5px 10px;
+    margin-bottom: 2px;
+    width: 100%;
+    /* Full width of the container */
+    box-sizing: border-box;
+    /* Include padding in width calculation */
+}
+
+.form-section label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.register-button {
+    /* Similar styles to your login page buttons */
+}
+
+.informative-text {
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.form-section select {
+    background-color: white;
+    border: solid #003056;
+    border-radius: 30px;
+    padding: 10px 15px;
+    /* Adjust padding as needed */
+    margin-bottom: 10px;
+    width: 100%;
+    /* Full width of the container */
+    box-sizing: border-box;
+    /* Include padding in width calculation */
+    font-size: 16px;
+    /* Adjust font size as needed */
+}
+
+.phone-input-container {
+    display: flex;
+    align-items: center;
+    border: solid #003056;
+    border-radius: 30px;
+    padding: 5px;
+}
+
+.phone-prefix {
+    padding: 5px 10px;
+    background-color: #e9ecef;
+    /* Light grey background */
+    border-right: 1px solid #003056;
+    border-radius: 25px 0 0 25px;
+    /* Rounded left corners */
+}
+
+.phone-input-container input {
+    flex: 1;
+    border: none;
+    border-radius: 0 25px 25px 0;
+    /* Rounded right corners */
+    margin-left: 5px;
+}

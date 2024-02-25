@@ -1,15 +1,11 @@
-{% extends  'base.html' %}
+{% extends 'base.html' %}
 
-{% block head_section %} 
+{% block  head_section %}
 <title> Stimmungskompass </title>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <!-- Open Graph / Facebook -->
-      <link rel="icon" type="image/x-icon" href="{{ url_for('serve_image', filename='favicon.ico') }}">
-      <link rel="icon" href="{{ url_for('favicon') }}" type="image/x-icon">
       <!-- Leaflet CSS -->
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-      <link rel="manifest" href="{{ url_for('serve_image', filename='site.webmanifest') }}">
       <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
       </script>
       <script src="static/spamFilter.js"></script>
@@ -24,29 +20,23 @@
       <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css" />
       <!-- Include Spectrum's JavaScript from CDN -->
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js"></script>
-      <div id="landscape-blocker" style="display: none;">
-         <p>Der Stimmungskompass ist nur im Hochformat verfügbar.</p>
-         <img id="anti-rotate-image" src="static/antirotate.png" alt="Rotate Device" style="max-width: 30%; height: auto; display: block; margin: 0 auto;">
-      </div>
-      <div id="portrait-blocker" style="display: none;">
-         <p>Der Stimmungskompass ist nur im Querformat verfügbar.</p>
-         <img id="anti-rotate-image" src="static/antirotate_ipad.png" alt="Rotate Device" style="max-width: 30%; height: auto; display: block; margin: 0 auto;">
-      </div>
-      <style type="text/css">
-         background-color: var(--background-color);
-         /* Apply background color */
-         color: var(--text-color);
-         /* Apply text color */
-      </style>
+      
 {% endblock %}
-{% block styles %} {% include 'karte/karte.css' %}{% endblock %}
-{% block header %}
-    {% include 'partials/header/index.html' %}
+
+{% block styles %} 
+{% include 'karte/karte.css' %}
 {% endblock %}
+
+{% block header %} 
+{% include 'partials/header/index.html' %}
+{% endblock %}
+
 {% block content %}
-    {%  include '/karte/karte.html' %}
+{% include 'karte/karte.html' %}
 {% endblock %}
-{% block footer %}
-    {% include 'partials/footer/index.html' %}
+
+{% block scripts %}
+{% include 'karte/karte.js' %}
 {% endblock %}
-{% block scripts %} {% include 'karte/karte.js' %} {% endblock %}
+
+

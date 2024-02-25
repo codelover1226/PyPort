@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block head_section %}
+    <title>Verify Admin OTP</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+{% endblock %}
+
+{% block styles %}
+{% include 'verify_admin_otp/verify_admin_otp.css' %}
+{% endblock %}
+
+{% block content %}
+{% include 'verify_admin_otp/verify_admin_otp.html' %}
+{% endblock %}
+

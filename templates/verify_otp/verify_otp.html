@@ -1,0 +1,16 @@
+<div class="logo-container" onclick="redirectToIndex()">
+  <img src="{{ url_for('serve_image', filename='logo.png') }}" alt="Logo" class="logo">
+</div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passwort bestätigen</title>
+</head>
+<body>
+<div class="form-container">
+  <h2>You are almost finished with your account creation.</h2>
+  <h2>Enter the code sent to your phone to confirm your registration!</h2>
+  <form action="{{ url_for('verify_otp') }}" method="post">
+    <input type="text" name="otp" placeholder="Passwort eingeben" required class="input">
+    <button type="submit" class="button">Verify</button>
+  </form>
+</div>

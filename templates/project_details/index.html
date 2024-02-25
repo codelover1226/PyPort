@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block head_section %}
+    <title>Project Detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('serve_image', filename='project_details.css') }}">
+{% endblock %}
+
+{% block header %}
+{% include 'partials/header/index.html' %}
+{% endblock %}
+
+{% block content %}
+{% include 'project_details/project_details.html' %}
+{% endblock %}
+
+{% block footer %}
+{% include 'partials/footer/index.html' %}
+{% endblock %}
+
+{% block scripts %}
+{% include 'project_details/project_details.js' %}
+{% endblock %}
+

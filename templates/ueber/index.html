@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block head_section %}
+    <title>Open Data - Stimmungskompass</title>
+    <link rel="stylesheet" href="{{ url_for('serve_image', filename='ueber.css') }}">
+{% endblock %}
+
+{% block header %}
+{% include 'partials/header/index.html' %}
+{% endblock %}
+
+{% block content %}
+{% include 'ueber/ueber.html' %}
+{% endblock %}
+
+{% block footer %}
+{% include 'partials/footer/index.html' %}
+{% endblock %}
+
+{% block scripts %}
+{% include 'login/login.js' %}
+{% endblock %}
+

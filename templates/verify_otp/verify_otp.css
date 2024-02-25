@@ -1,0 +1,256 @@
+body {
+    font-family: MaisonNeue, Segoe UI, Helvetica Neue, -apple-system, system-ui, BlinkMacSystemFont, Roboto, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+    background-color: #f5f1e4;
+    color: black;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    /* Center content */
+    display: flex;
+    flex-direction: column;
+    /* Stack content vertically */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .logo-container {
+    background-color: #003056;
+    /* Dark blue background */
+    border-radius: 80px;
+    /* Pill shape */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+    padding: 5px 10px;
+    /* Adjust as needed */
+    cursor: pointer;
+    /* Change cursor to indicate clickable */
+    transition: width 0.3s ease;
+    /* Smooth transition for scaling */
+  }
+
+  .logo-container:hover {
+    transform: scale(1.005);
+    /* Enlarge on hover */
+    padding: 5px;
+    /* Adjust padding if needed */
+  }
+
+  .logo {
+    max-width: 500px;
+    /* Adjust the size of the logo as needed */
+    height: auto;
+    /* Maintain aspect ratio */
+  }
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    align-items: flex-start;
+    /* Align the top of the sections */
+  }
+
+  .login-form {
+    max-width: 500px;
+    /* Adjust based on preference */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Align items to the left */
+  }
+
+  .input {
+    background-color: white;
+    border: solid #003056;
+    border-radius: 30px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    width: 100%;
+    /* Full width of the container */
+    box-sizing: border-box;
+    /* Include padding in width calculation */
+    font-size: 18px;
+    /* Increased font size */
+  }
+
+  .login-section h1 {
+    text-align: left;
+    /* Align the heading to the left */
+    margin-left: 20px;
+    /* Adjust as needed for proper alignment */
+  }
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    align-items: stretch;
+    /* Change to stretch to fill the container height */
+  }
+
+  .login-section,
+  .cover-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center items horizontally in both sections */
+  }
+
+  .button:hover,
+  .register-button:hover {
+    background-color: #004080;
+    /* Lighten up color on hover - adjust as needed */
+    transform: scale(1.005);
+    /* Scale up on hover */
+  }
+
+  .cover-section {
+    justify-content: center;
+    /* Center items vertically */
+    text-align: right;
+    /* Align text to the right */
+  }
+
+  .cover-image {
+    max-width: 100%;
+    height: 500px;
+    /* Keep height as 400px */
+    border-radius: 30px;
+    object-fit: cover;
+    /* Adjusts image to fit the div */
+    margin-bottom: 20px;
+    /* Space between image and text */
+    margin-left: 20px;
+  }
+
+  .button,
+  .register-button {
+    background-color: #003056;
+    /* Example color */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 15px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    width: 100%;
+    /* Full width */
+    box-sizing: border-box;
+    /* Include padding in width */
+  }
+
+  .register-section {
+    text-align: center;
+    margin-top: 20px;
+    /* Space above the section */
+  }
+
+  .register-section p {
+    margin: 5px 0;
+    /* Spacing for paragraph and undertitle */
+  }
+
+  .login-form {
+    max-width: 500px;
+    /* Adjust based on preference */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Align items to the left */
+  }
+
+  .input[type="text"] {
+    background-color: white;
+    border: solid #003056;
+    border-radius: 30px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    width: 100%;
+    /* Full width of the container */
+    box-sizing: border-box;
+    /* Include padding in width calculation */
+  }
+
+  /* Existing styles... */
+  /* Media query for tablets */
+  @media screen and (max-width: 768px) {
+    .logo-container {
+      margin: 10px !important;
+      /* 4px margin on all sides */
+      width: 90%;
+      /* 90% width */
+    }
+
+    .container {
+      flex-direction: column;
+      width: 90%;
+    }
+
+    .login-section,
+    .cover-section {
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .login-form input[type="text"] {
+      padding: 5px 10px;
+      /* Smaller padding */
+    }
+
+    .button,
+    .register-button {
+      padding: 10px 20px;
+    }
+
+    .cover-image {
+      height: 300px;
+      /* Smaller image for tablet */
+      margin: auto;
+      margin-bottom: 10px;
+    }
+  }
+
+  /* Media query for mobile phones */
+  @media screen and (max-width: 480px) {
+    body {
+      font-size: 14px;
+      /* Smaller text size */
+    }
+
+    .logo-container {
+      margin: 4px;
+      /* 4px margin on all sides */
+      margin-bottom: 10px;
+      /* 10px margin-bottom */
+      width: 90%;
+      /* 90% width */
+    }
+
+    .logo {
+      max-width: 250px;
+      /* Smaller logo for mobile */
+    }
+
+    .login-form input[type="text"] {
+      padding: 5px 10px;
+    }
+
+    .button,
+    .register-button {
+      font-size: 14px;
+      padding: 8px 15px;
+    }
+
+    .cover-image {
+      height: 200px;
+      /* Even smaller image for mobile */
+    }
+  }

@@ -1,0 +1,25 @@
+<div class="logo-container" onclick="redirectToIndex()">
+    <img src="{{ url_for('serve_image', filename='logo.png') }}" alt="Logo" class="logo">
+  </div>
+  <div class="container">
+    <div class="register-section">
+      <h2>Erstellen Sie ein Konto.</h2>
+      <form action="{{ url_for('register') }}" method="post">
+        <div class="form-section">
+          <label for="phone">Handynummer</label>
+          <input type="text" name="phone_number" placeholder="Ihre Handynummer" required>
+          <label for="password">Passwort</label>
+          <input type="password" id="password" name="password" required maxlength="100">
+          <label for="name">Benutzername</label>
+          <input type="text" id="name" name="name" required maxlength="100">
+        </div>
+        <p class="informative-text">Außer Ihrem Benutzernamen wird nichts öffentlich angezeigt.</p>
+        <p class="informative-text">Sie können Ihre Daten jederzeit in Ihren Profileinstellungen ansehen.</p>
+        <button type="submit" class="register-button" style="font-weight: bold;">Register</button>
+      </form>
+    </div>
+    <div class="cover-section">
+      <img src="{{ url_for('serve_image', filename='login_titleimage.png') }}" alt="Cover Image" class="cover-image">
+    </div>
+  </div>
+</body>

@@ -3,6 +3,11 @@
 {% block head_section %} 
 <title>Stimmungskompass DEMO</title>
 <link rel="stylesheet" href="{{ url_for('serve_image', filename='index.css') }}">
+<div id="ios-install-prompt" style="display:none;">
+    <p>Stimmungskompass App verfügbar:</p>
+    <p>Tippen Sie auf <img src="{{ url_for('serve_image', filename='share-icon.png') }}" alt="Teilen-Symbol">, dann "Zum Home-Bildschirm".</p>
+    <button id="close-prompt">Schließen</button>
+ </div>
 {% endblock %}
 {% block header %}
 {% include '/partials/header/index.html' %}

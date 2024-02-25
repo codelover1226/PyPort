@@ -1,0 +1,77 @@
+<div id="video-overlay" class="video-overlay" style="display:none;">
+    <iframe id="youtube-iframe" width="560" height="315" src="https://www.youtube.com/embed//N2u47YzgFv4?" frameborder="0" allowfullscreen></iframe>
+    <div id="replay-container" style="display: none;"></div>
+    <!-- Container for replay image -->
+    <button onclick="closeVideoOverlay()" class="register-button">Schließen</button>
+  </div>
+  <div class="form-container">
+    <div class="header-container">
+      <h1 id="page-title">Teilen Sie Ihre Idee!</h1>
+      <a href="#" id="info-link">
+        <img src="{{ url_for('serve_image', filename='infobutton.png') }}" alt="Info" class="info-image">
+      </a>
+    </div>
+    <form method="POST" enctype="multipart/form-data" action="/submit_project">
+      <!-- Step 1: Title -->
+      <div class="input-field">
+        <label for="title">1. Geben Sie Ihrem Vorschlag einen Namen</label>
+        <p style="color: #003056;">Worum geht es? (Formuliert in ein paar Worten)</p>
+        <!-- Added description -->
+        <input type="text" id="title" name="name" required="">
+      </div>
+      <!-- Category Selection -->
+      <div class="input-field">
+        <label for="category">2. Wählen Sie eine Kategorie</label>
+        <select id="category" name="category" required>
+          <option value="Transport">Transport</option>
+          <option value="Öffentliche Plätze">Öffentliche Plätze</option>
+          <option value="Umwelt">Umwelt</option>
+          <option value="Verwaltung">Verwaltung</option>
+          <option value="Kultur">Kultur</option>
+          <option value="Bildung">Bildung</option>
+          <option value="Gesundheit">Gesundheit</option>
+          <option value="Sport">Sport</option>
+          <option value="Andere">Andere</option>
+        </select>
+      </div>
+      <div id="category-description">
+        <!-- Dynamic category description text will appear here -->
+      </div>
+      <!-- Step 3: Description -->
+      <div class="input-field" style="margin-top:40px">
+        <label for="descriptionwhy">3. Beschreiben Sie Ihren Vorschlag und schreiben Sie, warum es Ihnen ein Anliegen ist.</label>
+        <p style="color: #003056;">Erklären Sie verständlich, worum es geht und beschreiben Sie, was und warum es verbessert oder verändert werden soll. </p>
+        <div id="description-editor"></div>
+        <!-- Quill container -->
+        <textarea id="descriptionwhy" name="descriptionwhy" style="display:none;"></textarea>
+      </div>
+      <!-- Step 4: Benefit -->
+      <div class="input-field">
+        <label for="public_benefit">4. Welcher Vorteil für die Öffentlichkeit ensteht dadurch?</label>
+        <p style="color: #003056;">Erklären Sie kurz, wie die Einwohner davon profitieren.</p>
+        <div id="benefit-editor"></div>
+        <!-- Quill container -->
+        <textarea id="public_benefit" name="public_benefit" style="display:none;"></textarea>
+      </div>
+      <!-- Step 5: Image Upload -->
+      <div class="input-field">
+        <label for="image">5. Fügen Sie ein Bild hinzu.</label>
+        <p style="color: #003056;">Wählen Sie ein passendes Bild, dass den Vorschlag verständlich macht.</p>
+        <input type="file" id="image" name="image_file" accept="image/*" required>
+        <img id="image-preview" style="display:none; max-width: 100%; border-radius: 0px !important;">
+        <!-- Hidden initially -->
+        <div id="image-preview-container" style="border-radius: 0px !important;"></div>
+      </div>
+      <!-- Map Container -->
+      <div class="input-field">
+        <label for="map">6. Wählen Sie den betreffenden Ort auf der Stadtkarte aus.</label>
+        <div id="map"></div>
+        <input type="hidden" id="geoloc" name="geoloc" required>
+      </div>
+      <!-- Inside the form element -->
+      <!-- Existing 'Veröffentlichen' button -->
+      <button type="submit" id="publish-button" class="button publish-button">Veröffentlichen</button>
+      <!-- New 'Projekt aktualisieren' button, hidden initially -->
+      <button type="submit" id="update-button" class="button update-button" style="display: none;">Inhalte aktualisieren</button>
+    </form>
+  </div>

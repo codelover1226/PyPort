@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head_section %}
+    <title>Neuerbeitrag</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('serve_image', filename='neuerbeitrag.css') }}">
+
+{% endblock %}
+
+
+{% block header %}
+{% include 'partials/header/index.html' %}
+{% endblock %}
+
+{% block content %}
+{% include 'neuerbeitrag/neuerbeitrag.html' %}
+{% endblock %}
+
+{% block footer %}
+{% include 'partials/footer/index.html' %}
+{% endblock %}
+
+{% block scripts %}
+{% include 'neuerbeitrag/neuerbeitrag.js' %}
+{% endblock %}
+

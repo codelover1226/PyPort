@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block head_section %}
+    <title>Login</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <link rel="stylesheet" href="{{ url_for('serve_image', filename='ueber.css') }}">
+    
+{% endblock %}
+
+{% block styles %}
+{% include 'password_recovery/password_recovery.css' %}
+{% endblock %}
+
+{% block content %}
+{% include 'password_recovery/password_recovery.html' %}
+{% endblock %}
+
+{% block scripts %}
+{% include 'password_recovery/password_recovery.js' %}
+{% endblock %}
+

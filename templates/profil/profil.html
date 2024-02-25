@@ -1,0 +1,78 @@
+<div class="filter-bar">
+  <button id="toggleProjectProposals" class="c-button" data-section-id="projectProposalsSection">Projektvorschläge</button>
+  <button id="toggleLesezeichen" class="c-button" data-section-id="bookmarksSection">Lesezeichen</button>
+  <button id="toggleNotes" class="c-button" data-section-id="notesSection">Notizen</button>
+  <button id="toggleComments" class="c-button" data-section-id="commentsSection">Kommentare</button>
+  <button id="toggleUsers" class="c-button" data-section-id="usersSection">Meine Konto</button>
+</div>
+<div id="filter-overlay" class="nav-overlay" style="display:none">
+  <div id="nav-links">
+    <!-- The links in the overlay should match the buttons in your filter bar -->
+    <a href="#" id="toggleProjectProposalsOverlay" class="c-button" data-section-id="projectProposalsSection">Projektvorschläge</a>
+    <a href="#" id="toggleLesezeichenOverlay" class="c-button" data-section-id="bookmarksSection">Lesezeichen</a>
+    <a href="#" id="toggleNotesOverlay" class="c-button" data-section-id="notesSection">Notizen</a>
+    <a href="#" id="toggleCommentsOverlay" class="c-button" data-section-id="commentsSection">Kommentare</a>
+    <a href="#" id="toggleUsersOverlay" class="c-button" data-section-id="usersSection">Meine Konto</a>
+  </div>
+</div>
+<button id="hamburger-button-filter">&#9776; Menu</button>
+<div class="my-projects centered-text"> {% if current_user.is_authenticated %} <div id="projectProposalsSection" style="display: none;">
+    <div class="info-text-field3-c">
+      <div class="my-statistics centered-text">
+        <!-- Marker Limit Info Display -->
+        <div class="marker-limit-info">
+          <h3 style="font-weight:bold;">Sie haben <span class="highlight">{{ user_statistics.num_projects }}</span>
+            <span class="highlight-word">Projektvorschläge</span> und <span class="highlight">{{ user_statistics.num_comments }}</span>
+            <span class="highlight-word">Kommentare</span> gepostet.
+          </h3> {% if user_statistics.most_viewed_project %} <h3 style="font-weight:bold;">Ihr am häufigsten angesehenes Projekt ist: <a href="{{ url_for('project_details', project_id=user_statistics.most_viewed_project.id) }}">{{ user_statistics.most_viewed_project.name }}</a>, mit <span class="highlight">{{ user_statistics.most_viewed_project.view_count }}</span> Ansichten. </h3> {% else %} <p>Sie haben keine Projekte.</p> {% endif %} {% if user_statistics.most_successful_project %} <h3 style="font-weight:bold;">Ihr am höchsten bewertetes Projekt ist: <a href="{{ url_for('project_details', project_id=user_statistics.most_successful_project.id) }}">{{ user_statistics.most_successful_project.name }}</a>, mit <span class="highlight">{{ user_statistics.most_successful_project.upvotes }}</span> positiven Bewertungen. </h3> {% else %} <p>Ihre Projekte wurden noch nicht bewertet.</p> {% endif %}
+        </div>
+      </div>
+      <div id="projects-container"> {% with project_page=project_pagination.page, map_object_page=map_object_pagination.page, comment_page=comment_pagination.page %} {% include 'partials/projects_section.html' %} {% endwith %} </div>
+    </div>
+  </div>
+  <div id="notesSection" style="display: none;">
+    <div class="info-text-field2-c">
+      <div id="map-objects-container"> {% with project_page=project_pagination.page, map_object_page=map_object_pagination.page, comment_page=comment_pagination.page %} {% include 'partials/map_objects_section.html' %} {% endwith %} </div>
+    </div>
+  </div>
+  <div id="bookmarksSection" style="display: none;">
+    <div class="info-text-field3-c">
+      <div id="bookmarked-projects-container"> {% with bookmarked_projects=user_bookmarked_projects %} {% include 'partials/bookmarked_projects_section.html' %} {% endwith %} </div>
+    </div>
+  </div>
+  <div id="commentsSection" style="display: none;">
+    <div class="info-text-field3-c">
+      <div id="comments-container"> {% with project_page=project_pagination.page, map_object_page=map_object_pagination.page, comment_page=comment_pagination.page %} {% include 'partials/comments_section_profil.html' %} {% endwith %} </div>
+    </div>
+  </div>
+  <div id="usersSection" style="display: none;">
+    <div class="info-text-field2">
+      <div class="centered-text">
+        <div class="stats-container">
+          <div class="stat-box"> {% if current_user.is_authenticated %} <p>Ihr Benutzername ist: <span style="color: #003056; font-weight: bold;">{{ current_user.name }}</span>
+            </p> {% if not current_user.is_googleaccount %} <p>Die verknüpfte Handynummer lautet: <span style="color: #003056;font-weight: bold;">{{ current_user.phone_number }}</span>. </p>
+            <p>Hier klicken, um das Passwort zurückzusetzen: <a href="{{ url_for('password_recovery') }}" style="color: #003056; font-weight: bold;">Reset</a>. </p> {% else %} <p>Das verknüpfte Google-Konto ist: <span style="color: #003056; font-weight: bold;">{{ current_user.phone_number }}</span>. </p> {% endif %} <p>Das Konto wurde erstellt am: <span style="color: #003056; font-weight: bold;">{{ current_user.account_creation.strftime('%d.%m.%Y %H:%M') }}</span>. </p> {% endif %}
+          </div> {% else %} <div class="login-prompt centered-text">
+            <p>Sie müssen angemeldet sein, um die Details zu sehen.</p>
+          </div> {% endif %}
+          <!-- My Account Section --> {% if is_authenticated %} <div class="stat-box">
+            <!-- Download My Data Section -->
+            <strong>
+              <p>Meine Daten herunterladen:</p>
+              <a href="{{ url_for('download_my_data') }}" class="register-button" style="font-weight: bold; display: inline-block; width: auto; padding: 5px 10px;">Daten herunterladen</a>
+              <a href="{{ url_for('download_data') }}" class="register-button" style="display:none">Website herunterladen</a>
+              <a href="{{ url_for('download_images') }}" class="publish-button" style="display:none">Bilder herunterladen</a>
+              <p>Möchten Sie Ihr Konto und Ihre gesamten Aktivitäten inklusive Ihrer Notizen und Projektvorschläge von der Website löschen? </p>
+              <a href="{{ url_for('delete_my_data') }}" class="register-button" style="font-weight: bold; display: inline-block; width: auto; padding: 5px 10px;" id="delete-data-btn">Meine gesamten Daten löschen</a>
+            </strong>
+          </div>
+        </div> {% endif %}
+      </div>
+    </div>
+    <a id="download-link" href="#" style="display: none;"></a>
+  </div>
+</div>
+
+{% if not current_user.is_authenticated %} <script>
+    window.location.href = "{{ url_for('login', next=url_for('profil')) }}";
+</script> {% endif %}

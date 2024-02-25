@@ -1301,7 +1301,7 @@ def register():
         logging.debug("OTP sent for verification to Ihre Handynummer: %s", phone_number)
         return jsonify({"success": True, "message": "OTP sent successfully"})
 
-    return render_template("register.html")
+    return render_template("register/index.html")
 
 
 # Function to clean up old IP addresses
@@ -1579,7 +1579,7 @@ def reset_password():
 
 @app.route("/neuerbeitrag")
 def neuerbeitrag():
-    return render_template("neuerbeitrag.html")
+    return render_template("neuerbeitrag/index.html")
 
 
 @app.route("/submit_project", methods=["GET", "POST"])
@@ -1888,7 +1888,7 @@ def project_details(project_id):
         is_mapobject = getattr(project, "is_mapobject", False)
 
         return render_template(
-            "project_details.html",
+            "project_details/index.html",
             project=project,
             prev_project_id=prev_project_id,
             next_project_id=next_project_id,
@@ -2510,9 +2510,9 @@ def delete_map_object(map_object_id):
 @app.route("/verify_admin_otp", methods=["GET", "POST"])
 @login_required
 def verify_admin_otp():
-    session["admin_verified"] = True
-    flash("OTP Verified. Access granted to admin tools.", "success")
-    return redirect(url_for("admintools"))
+    # session["admin_verified"] = True
+    # flash("OTP Verified. Access granted to admin tools.", "success")
+    # return redirect(url_for("admintools"))
 
     # Ensure the user is an admin
     if current_user.id != 1:
@@ -2531,7 +2531,7 @@ def verify_admin_otp():
             flash("Invalid OTP. Please try again.", "danger")
 
     return render_template(
-        "verify_admin_otp.html"
+        "verify_admin_otp/index.html"
     )  # Ensure this template exists for OTP input
 
 
@@ -2957,7 +2957,7 @@ def profil(project_page=1, map_object_page=1, comment_page=1):
 
     # Render the full page for a normal request
     return render_template(
-        "profil.html",
+        "profil/index.html",
         project_pagination=paginated_projects,
         map_object_pagination=paginated_map_objects,
         user_bookmarked_projects=bookmarked_projects,
@@ -2992,14 +2992,14 @@ def ueber():
     ip_address = request.remote_addr
     WebsiteViews.add_view(ip_address)
     # Additional logic can be added here if needed
-    return render_template("ueber.html")
+    return render_template("ueber/index.html")
 
 @app.route("/privacy")
 def privacy():
     ip_address = request.remote_addr
     WebsiteViews.add_view(ip_address)
     # Additional logic can be added here if needed
-    return render_template("privacy.html")
+    return render_template("privacy/index.html")
 
 
 @app.route("/delete_project/<int:project_id>", methods=["POST"])
@@ -3133,7 +3133,7 @@ def verify_otp():
             logging.debug("OTP verification failed")
             flash("Invalid OTP", "error")
 
-    return render_template("verify_otp.html")
+    return render_template("verify_otp/index.html")
 
 
 @app.route("/password_recovery", methods=["GET", "POST"])
@@ -3228,7 +3228,7 @@ def login():
             logging.debug("Login failed")
             return jsonify(success=False)
 
-    return render_template("login.html", next=next_page)
+    return render_template("login/index.html", next=next_page)
 
 
 @app.route("/vote/<int:project_id>", methods=["GET", "POST"])

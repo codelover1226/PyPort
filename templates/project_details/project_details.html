@@ -1,0 +1,83 @@
+<!-- Previous Project Arrow for Desktop --> {% if prev_project_id %} <a href="{{ url_for('project_details', project_id=prev_project_id) }}" class="arrow-desktop">
+    <img src="{{ url_for('serve_image', filename='arrowleft.png') }}" alt="Previous" class="arrow-left">
+</a> {% endif %}
+<!-- Next Project Arrow for Desktop --> {% if next_project_id %} <a href="{{ url_for('project_details', project_id=next_project_id) }}" class="arrow-desktop">
+  <img src="{{ url_for('serve_image', filename='arrowright.png') }}" alt="Next" class="arrow-right">
+</a> {% endif %}
+<!-- Previous Project Arrow for Mobile --> {% if prev_project_id %} <a href="{{ url_for('project_details', project_id=prev_project_id) }}" class="arrow-mobile-left">
+  <img src="{{ url_for('serve_image', filename='arrowcircle-left.png') }}" alt="Previous">
+</a> {% endif %}
+<!-- Next Project Arrow for Mobile --> {% if next_project_id %} <a href="{{ url_for('project_details', project_id=next_project_id) }}" class="arrow-mobile-right">
+  <img src="{{ url_for('serve_image', filename='arrowcircle-right.png') }}" alt="Next">
+</a> {% endif %} <div class="form-container">
+  <h2 class="centered-title">{{ project.name }}</h2>
+  <p class="centered-title">Gepostet am: <strong style="color: #003056;">{{ project.date.strftime('%d.%m.%Y, %H:%M') }}</strong>, Projektansichten: <strong style="color: #003056;">{{ project.view_count }}</strong>
+  </p>
+  <p class="centered-title" style="margin-bottom: 20px;"> Kategorie: <a href="{{ url_for('list_view', search='', category=project.category) }}" class="category-link">
+      <strong>{{ project.category }}</strong>
+    </a>, Autor/in: <strong style="color: #003056;">{{ author_name }}</strong>
+  </p> {% if not is_mapobject %} <div class="project-details">
+    <div class="left-column">
+      <img src="{{ url_for('serve_image', filename='usersubmissions/' + project.image_file) }}" alt="{{ project.name }}">
+      <div style="text-align: center;"> {% if current_user.is_authenticated %} {% set user_is_author = current_user.id|string == project.author|string %} {% set user_is_admin = current_user.is_admin %} {% if user_is_author or user_is_admin %} <a href="{{ url_for('neuerbeitrag', project_id=project.id) }}" class="comment-button" style="border-radius: 30px; display: block; margin-bottom: 20px; margin-top: 12px; text-align: center; text-decoration: none;">Bearbeiten</a> {% endif %} {% endif %} </div>
+      <div class="voting-bar" style="margin-top: 10px">
+        <div class="upvotes" style="width: {{ upvote_percentage }}%;"></div>
+        <div class="downvotes" style="width: {{ downvote_percentage }}%;"></div>
+      </div>
+      <div class="vote-counts">
+        <div class="upvotes-info">
+          <p id="upvote-count">Gefällt: <strong>{{ upvote_count }}</strong> ({{ upvote_percentage }}%) </p>
+        </div>
+        <div class="downvotes-info">
+          <p id="downvote-count">Gefällt nicht: <strong>{{ downvote_count }}</strong> ({{ downvote_percentage }}%) </p>
+        </div>
+      </div> {% if current_user.is_authenticated %} <div class="voting-buttons-container">
+        <button onclick="vote({{ project.id }}, 'upvote')" class="button upvote-button">Gefällt mir! 👍</button>
+        <button onclick="vote({{ project.id }}, 'downvote')" class="button downvote-button">Gefällt mir nicht. 👎</button> {% set bookmarked = current_user.is_authenticated and bookmarks|selectattr('project_id', 'equalto', project.id)|list|length > 0 %} <button id="bookmark-button" onclick="toggleBookmark({{ project.id }})" class="button bookmark-button">{{ 'Bookmarked ✨' if is_bookmarked else 'Bookmark ⭐' }}</button>
+      </div> {% else %} <div class="voting-login-prompt">
+        <p>Melden Sie sich an, um über Vorschläge abzustimmen.</p>
+      </div> {% endif %}
+    </div>
+    <div class="share-section">
+      <div class="share-buttons" style="margin-top:10px;">
+        <a href="#" id="share-whatsapp">
+          <img src="{{ url_for('serve_image', filename='icon_wh.png') }}" alt="WhatsApp">
+        </a>
+        <a href="#" id="share-facebook">
+          <img src="{{ url_for('serve_image', filename='icon_fb.png') }}" alt="Facebook">
+        </a>
+        <a href="#" id="share-share">
+          <img src="{{ url_for('serve_image', filename='icon_sh.png') }}" alt="Share">
+        </a>
+      </div>
+    </div>
+    <div class="right-column" style="text-align: left">
+      <div id="map" class="map-container"></div>
+      <div class="text-section">
+        <h2 class="centered-title section-title" style="margin-top: 30px; margin-bottom: 10px;">Warum schlage ich es vor?</h2>
+        <p class="text-content">{{ project.descriptionwhy | safe }}</p>
+      </div>
+      <div class="text-section">
+        <h2 class="centered-title section-title" style="margin-top: 30px; margin-bottom: 10px;">Wie wird die Öffentlichkeit davon profitieren?</h2>
+        <p class="text-content">{{ project.public_benefit | safe }}</p>
+      </div> {% if not project.is_global %} <h2 class="centered-title section-title" style="margin-top: 30px; margin-bottom: 10px;">Wo ist dieses Projekt?</h2>
+      <div id="project-map"></div> {% else %} <script>
+        //console.log("Map hidden because project is marked as global.");
+      </script> {% endif %} {% if current_user.is_authenticated %} <div class="voting-buttons-container"> {% set reported = current_user.is_authenticated and reports|selectattr('project_id', 'equalto', project.id)|list|length > 0 %} <button id="report-button" onclick="toggleReport({{ project.id }})" class="button report-button">{{ 'Spam gemeldet 🛑' if is_reported else 'Spam melden ⚠️' }}</button>
+      </div> {% endif %} <div id="comments-container" class="comments" style="margin-top:30px">
+        <h2 class="centered-title" style="margin-bottom: 10px">Kommentare</h2> {% for comment in comments %} <div class="comment">
+          <p>"{{ comment.text }}"</p>
+          <p>{{ comment.author_name }} am {{ comment.timestamp.strftime('%d.%m.%Y %H:%M') }}</p>
+        </div> {% endfor %}
+      </div> {% if current_user.is_authenticated %} <div class="comment-form">
+        <form id="comment-form" action="{{ url_for('comment', project_id=project.id) }}" method="POST">
+          <textarea name="comment" class="full-width-textarea" required></textarea>
+          <div id="charCountFeedback" style="text-align: center; color: #003056;"></div>
+          <button type="submit" id="comment-button" class="button comment-button">Speichern 💬</button>
+        </form>
+      </div> {% endif %} <div class="share-button-container" style="display:none;">
+        <button id="shareButton" class="button">Teilen</button>
+      </div>
+    </div>
+  </div> {% else %} <p>"Dieses Projekt wurde über Karte.html als Notiz erstellt. Daher wird hier nichts angezeigt."</p> {% endif %}
+</div>
