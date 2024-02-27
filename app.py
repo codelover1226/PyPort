@@ -12,8 +12,10 @@ from flask import (
     send_from_directory,
     make_response,
     flash,
-    abort
+    abort,
+    g
 )
+import re
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, desc, asc, and_, cast, Date
 from flask_migrate import Migrate
@@ -49,7 +51,7 @@ from twilio.rest import Client
 import matplotlib.pyplot as plt
 from openpyxl import Workbook
 import openpyxl
-from openpyxl.drawing.image import Image
+from openpyxl.drawing.image import Image as ExcelImage
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.chart import PieChart, Reference
@@ -57,8 +59,8 @@ from collections import Counter
 from bs4 import BeautifulSoup
 import logging
 import shutil
-from pathlib import Path
 from PIL import Image
+from pathlib import Path
 from collections import Counter
 import os
 import pandas as pd
@@ -72,7 +74,7 @@ import time
 import threading
 from io import StringIO
 import random
-from flask_caching import Cache
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -82,14 +84,9 @@ account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
 auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
 twilio_number = os.environ.get("TWILIO_PHONE_NUMBER")
 
-print("Twilio Account SID:", account_sid)
-print("Twilio Auth Token:", auth_token)
-print("Twilio Ihre Handynummer:", twilio_number)
-
 
 # Initialize the Flask app
 app = Flask(__name__)
-cache = Cache(app)
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1
 )
@@ -102,9 +99,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project_voting.db"
 app.config[
     "UPLOAD_FOLDER"
 ] = "static/usersubmissions"  # Specify the folder where uploaded files will be saved
-
-app.config['CACHE_TYPE'] = 'simple'  # Use SimpleCache
-app.config['CACHE_DEFAULT_TIMEOUT'] = 300  # Default cache timeout (in seconds)
 
 
 db.init_app(app)
@@ -134,7 +128,14 @@ google = oauth.register(
 )
 
 
-
+@app.before_request
+def before_request():
+    g.metaData = {
+        'og_url': 'https://www.stimmungskompass.at/',
+        'og_title': 'Stimmungskompass - Eine Plattform zur Bürgerbeteiligung',
+        'og_description': 'Eine Plattform zur Bürgerbeteiligung. Engagiere dich für eine bessere Stadt!',
+        'og_image': 'https://www.stimmungskompass.at/static/facebook_card.png'
+    }
 
 @app.route('/images/<path:filename>')
 def serve_image(filename):
@@ -598,8 +599,10 @@ def generate_pie_chart_description_length(workbook, length_ranges):
 def calculate_votes(project_id):
     project = Project.query.get(project_id)
     if project:
-        upvotes = sum(1 for vote in project.votes if vote.upvote)
-        downvotes = sum(1 for vote in project.votes if vote.downvote)
+        upvotes = Vote.query.filter_by(project_id=project.id, upvote=True).count()
+        downvotes = Vote.query.filter_by(project_id=project.id, downvote=True).count()
+        # upvotes = sum(1 for vote in project.votes if vote.upvote)
+        # downvotes = sum(1 for vote in project.votes if vote.downvote)
         return upvotes, downvotes
     else:
         return 0, 0
@@ -666,72 +669,29 @@ def export_csv():
     response = make_response(csv_data.getvalue())
     response.headers["Content-Disposition"] = "attachment; filename=projects_data.csv"
     response.headers["Content-type"] = "text/csv"
-    return response
 
+
+    return response
 
 @app.route("/export_projects", methods=["GET", "POST"])
 @login_required
 def export_projects():
     try:
-        app.logger.debug("Starting export_projects function")
-        app.logger.debug(f"Request method: {request.method}")
-
-        # Retrieve filter parameters
-        category = request.values.get("category")
-        older_than = request.values.get("older_than")
-        younger_than = request.values.get("younger_than")
-        upvotes_greater = request.values.get("upvotes_greater", type=int)
-        downvotes_lower = request.values.get("downvotes_lower", type=int)
-        total_score_greater = request.values.get("total_score_greater", type=int)
-        comments_greater = request.values.get("comments_greater", type=int)
+        category = request.values.get("category")       
         include_comments = "include_comments" in request.values
         include_votes = "include_votes" in request.values
-
-        selected_category = request.values.get("category")
-        app.logger.debug(f"Selected category for export: {selected_category}")
-
-        app.logger.debug(
-            f"Filters: {category}, {older_than}, {younger_than}, {upvotes_greater}, {downvotes_lower}, {total_score_greater}, {comments_greater}, {include_comments}, {include_votes}"
-        )
-        app.logger.debug(f"Exporting projects for category: {category}")
-
-        # Query database based on filters
         query = Project.query
-        if selected_category and selected_category != "":
-            query = query.filter_by(category=selected_category)
-            app.logger.debug("Filtering projects by category for export")
-        if older_than:
-            query = query.filter(
-                Project.date < datetime.strptime(older_than, "%Y-%m-%d")
-            )
-        if younger_than:
-            query = query.filter(
-                Project.date > datetime.strptime(younger_than, "%Y-%m-%d")
-            )
-        if upvotes_greater is not None:
-            query = query.filter(Project.upvotes > upvotes_greater)
-        if downvotes_lower is not None:
-            query = query.filter(Project.downvotes < downvotes_lower)
-        if total_score_greater is not None:
-            query = query.filter(
-                (Project.upvotes - Project.downvotes) > total_score_greater
-            )
-        if comments_greater is not None:
-            query = query.filter(Project.comments_count > comments_greater)
-
-        # Fetch data
+        if category:
+            query = query.filter_by(category=category)
         projects = query.all()
-
-        projects = query.all()
-
         # Convert to DataFrame and strip HTML tags from specific fields
         def strip_html(content):
             if content:
                 return BeautifulSoup(content, "html.parser").get_text()
             return content
-
         projects_data = []
         for project in projects:
+            app.logger.info(project)
             project_dict = project.to_dict()
             # Update fields with HTML content
             project_dict["descriptionwhy"] = strip_html(project_dict["descriptionwhy"])
@@ -762,17 +722,19 @@ def export_projects():
             "image_file": "Bild",
             "is_important": "Privat markiert",
             "is_featured": "Ausgewählt",
+            "view_count" : "View Count",
+            "p_reports" : "P Reports",
             "upvotes": "Upvotes",  # New columns for upvotes and downvotes
             "downvotes": "Downvotes",
         }
         df = df.rename(columns=rename_columns)[
             list(rename_columns.values())
         ]  # Reorder columns
+        app.logger.info(df.to_json)
+        app.logger.info(projects)
 
         # Remove the 'p_reports' column
-        df.drop(columns=["p_reports"], inplace=True, errors="ignore")
-
-        # Remove the 'p_reports' column
+        # df.drop(columns=["p_reports"], inplace=True, errors="ignore")
 
         def format_geoloc(geoloc):
             try:
@@ -791,11 +753,6 @@ def export_projects():
         else:
             app.logger.warning("'geoloc' column not found in DataFrame")
 
-        # Include comments and votes if requested
-        df["Upvotes"] = 0  # Initialize with 0
-        df["Downvotes"] = 0  # Initialize with 0
-
-        # Include comments and votes if requested
         if include_comments or include_votes:
             for project in projects:
                 # Include comments and votes if requested
@@ -821,15 +778,8 @@ def export_projects():
                         df, comments_df, how="left", left_on="id", right_on="project_id"
                     )
 
-                if include_votes:
-                    # Add vote data
-                    project_votes = Vote.query.filter_by(project_id=project.id).all()
-                    upvotes = sum(1 for vote in project_votes if vote.upvote)
-                    downvotes = sum(1 for vote in project_votes if vote.downvote)
-                    df.loc[df["ID"] == project.id, "Upvotes"] = upvotes
-                    df.loc[df["ID"] == project.id, "Downvotes"] = downvotes
+                    
 
-        # Save DataFrame to an Excel file
         filename = "exported_projects.xlsx"
         filepath = os.path.join("static/excel", filename)
         writer = pd.ExcelWriter(filepath, engine="openpyxl")
@@ -837,6 +787,7 @@ def export_projects():
         workbook = writer.book
         worksheet = writer.sheets["Exported Projects"]
 
+                    
         # Medium border style
         medium_border_side = Side(border_style="medium", color="000000")
         medium_border = Border(top=medium_border_side, bottom=medium_border_side)
@@ -844,7 +795,6 @@ def export_projects():
         # Font for all cells
         font_size = 12  # Set your desired font size
         bahnschrift_font = Font(name="Bahnschrift", size=font_size)
-
         # Formatting for the first row
         header_font = Font(
             name="Bahnschrift", bold=True, color="F5F1E4", size=font_size + 2
@@ -871,7 +821,6 @@ def export_projects():
             for cell in row:
                 cell.font = Font(name="Bahnschrift", size=12, bold=True)
 
-        # Apply styles to all cells
         for row in worksheet.iter_rows():
             for cell in row:
                 cell.font = bahnschrift_font  # Set font for all cells
@@ -881,8 +830,9 @@ def export_projects():
                     cell.fill = header_fill  # Apply fill for the first row
                     cell.alignment = Alignment(horizontal="center", vertical="center")
 
-        # Alternate background colors and wrap text
+
         colors = ["F5F1E4", "D9D4C7"]
+
         for i, column_cells in enumerate(worksheet.columns):
             color_index = i % len(colors)  # Alternate between 0 and 1
             fill = PatternFill(
@@ -899,7 +849,7 @@ def export_projects():
         for column_cells in worksheet.columns:
             length = max(len(str(cell.value)) for cell in column_cells)
             length = min(length, max_char_length)  # Limit to max_char_length characters
-            col_width = length * 1.2  # Approximate column width
+            col_width = length * 1.3  # Approximate column width
             column_letter = get_column_letter(column_cells[0].column)
             worksheet.column_dimensions[column_letter].width = col_width
 
@@ -907,7 +857,7 @@ def export_projects():
         start_row_for_charts = df.shape[0] + 3  # 2 rows gap after the DataFrame
 
         # Pie Chart for Project Categories
-        app.logger.debug("Generating pie chart for project categories")
+        # app.logger.debug("Generating pie chart for project categories")
         category_counts = Counter(df["Kategorie"])
         fig, ax = plt.subplots()
         ax.pie(
@@ -917,8 +867,9 @@ def export_projects():
         img_data = io.BytesIO()
         plt.savefig(img_data, format="png")
         img_data.seek(0)
-        img = Image(img_data)
-        chart1_cell = f"A{start_row_for_charts}"  # Adjust as needed
+        app.logger.info("here")
+        img = ExcelImage(img_data)
+        chart1_cell = f"D{start_row_for_charts}"  # Adjust as needed
         worksheet.add_image(img, chart1_cell)
         app.logger.debug("Pie chart for project categories created")
 
@@ -937,7 +888,6 @@ def export_projects():
                 return "400-800"
             else:
                 return "800-5000"
-
         df["Length Category"] = df.apply(get_length_category, axis=1)
         length_category_counts = Counter(df["Length Category"])
         fig, ax = plt.subplots()
@@ -950,8 +900,8 @@ def export_projects():
         img_data = io.BytesIO()
         plt.savefig(img_data, format="png")
         img_data.seek(0)
-        img = Image(img_data)
-        chart2_cell = f"H{start_row_for_charts}"  # Adjust as needed
+        img = ExcelImage(img_data)
+        chart2_cell = f"f{start_row_for_charts}"  # Adjust as needed
         worksheet.add_image(img, chart2_cell)
         app.logger.debug("Pie chart for average description length created")
 
@@ -970,21 +920,18 @@ def export_projects():
         img_data = io.BytesIO()
         plt.savefig(img_data, format="png")
         img_data.seek(0)
-        img = Image(img_data)
-        chart3_cell = f"O{start_row_for_charts}"  # Adjust the cell location as needed
+        img = ExcelImage(img_data)
+        chart3_cell = f"E{ start_row_for_charts}"  # Adjust the cell location as needed
         worksheet.add_image(img, chart3_cell)
         app.logger.debug("Pie chart for Notizen vs Projektvorschläge created")
 
-        writer.save()
+        writer._save()
         app.logger.debug(f"Excel file with pie charts saved at {filepath}")
 
-        # Return the file path in the JSON response
         return jsonify({"filepath": filepath})
-
     except Exception as e:
-        app.logger.error(f"Error in export_projects: {e}")
+        print("Error:", str(e))  # More detailed error logging
         return jsonify({"error": str(e)}), 500
-
 
 @app.route("/get_categories")
 def get_categories():
@@ -1156,7 +1103,6 @@ def download_images():
 
 
 @app.route("/")
-@cache.cached(timeout=60)
 def index():
     projects = Project.query.all()
     featured_projects = Project.query.filter_by(is_featured=True).all()
@@ -1185,12 +1131,16 @@ def index():
     # Count projects where is_mapobject is true
     mapobject_count = Project.query.filter_by(is_mapobject=True).count()
 
+    metaData = g.metaData
+
+
     return render_template(
         "index.html",
         projects=projects,
         project_count=project_count_non_map,
         mapobject_count=mapobject_count,
         featured_projects=featured_projects,
+        metaData=metaData,
     )
 
 
@@ -1306,8 +1256,8 @@ def register():
 
         logging.debug("OTP sent for verification to Ihre Handynummer: %s", phone_number)
         return jsonify({"success": True, "message": "OTP sent successfully"})
-
-    return render_template("register/index.html")
+    metaData=g.metaData
+    return render_template("register/index.html", metaData=metaData)
 
 
 # Function to clean up old IP addresses
@@ -1532,7 +1482,6 @@ def favicon():
 
 
 @app.route("/karte")
-@cache.cached(timeout=60)
 def karte():
     # Fetch your projects data from the database or any source
     ip_address = request.remote_addr
@@ -1540,7 +1489,8 @@ def karte():
     projects = (
         get_projects()
     )  # This is a placeholder for your actual function to fetch projects
-    return render_template("karte/index.html", projects=projects)
+    metaData = g.metaData
+    return render_template("karte/index.html", projects=projects, metaData=metaData)
 
 
 @app.route("/request_otp", methods=["POST"])
@@ -1563,6 +1513,8 @@ def request_otp():
 
 @app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
+    
+    metaData=g.metaData
     if request.method == "POST":
         otp_entered = request.form.get("otp")
         new_password = request.form.get("new_password")
@@ -1581,12 +1533,13 @@ def reset_password():
             flash('Invalid Ihre Handynummer.', 'danger')
         # else:
         flash('Invalid OTP. Please try again.', 'danger')
-    return render_template("reset_password.html")
+    return render_template("reset_password.html", metaData=metaData)
 
 
 @app.route("/neuerbeitrag")
 def neuerbeitrag():
-    return render_template("neuerbeitrag/index.html")
+    metaData=g.metaData
+    return render_template("neuerbeitrag/index.html", metaData=metaData)
 
 
 @app.route("/submit_project", methods=["GET", "POST"])
@@ -1653,8 +1606,8 @@ def submit_project():
             return redirect(url_for("project_details", project_id=new_project.id))
         else:
             return redirect(url_for("submit_project"))
-
-    return render_template("neuerbeitrag.html")
+    metaData=g.metaData
+    return render_template("neuerbeitrag/index.html", metaData=metaData)
 
 @app.route('/robots.txt')
 def robots_txt():
@@ -1667,7 +1620,6 @@ def service_worker():
 
 @app.route("/list")
 @app.route("/list/pages/<int:page>")
-@cache.cached(timeout=60)
 def list_view(page=1):
     per_page = 50  # Number of projects per page
     query = Project.query.filter(Project.is_mapobject != True)
@@ -1724,9 +1676,9 @@ def list_view(page=1):
         else:
             project.upvote_percentage = 0
             project.downvote_percentage = 0
-
+    metaData = g.metaData
     return render_template(
-        "list/index.html", projects=paginated_projects.items, pagination=paginated_projects
+        "list/index.html", projects=paginated_projects.items, pagination=paginated_projects, metaData=metaData
     )
 
 
@@ -1892,9 +1844,19 @@ def project_details(project_id):
             }
             for comment in comments
         ]
-
+        
         is_mapobject = getattr(project, "is_mapobject", False)
-
+        logging.debug(project)
+        def remove_p_tags(text):
+            pattern = re.compile(r'<p>|</p>')
+            cleaned_text = pattern.sub('', text)
+            return cleaned_text
+        
+        g.metaData['og_url']="https://stimmungskompass.ermine.at/project_details/"+str(project_id)
+        g.metaData['og_description']=remove_p_tags(project.descriptionwhy)
+        g.metaData['og_image']="https://stimmungskompass.ermine.at/static/usersubmissions/" + project.image_file
+        g.metaData['og_title']=project.name
+        metaData=g.metaData
         return render_template(
             "project_details/index.html",
             project=project,
@@ -1911,6 +1873,7 @@ def project_details(project_id):
             currentUserId=current_user.id if current_user.is_authenticated else None,
             is_bookmarked=is_bookmarked,
             is_reported=is_reported,
+            metaData=metaData
         )
     except Exception as e:
         app.logger.error("Error in project_details route: %s", str(e))
@@ -2066,14 +2029,14 @@ def delete_map_objects_by_date():
 
 
 @app.route("/admintools", methods=["GET", "POST"])
-@cache.cached(timeout=60)
 @login_required
 def admintools():
     # Check if the user is the admin
+    
     if current_user.id != 1:
         flash("", "danger")
         return redirect(url_for("index"))
-
+    
     # Check for OTP verification
     if "admin_verified" not in session or not session["admin_verified"]:
         # Generate OTP
@@ -2329,6 +2292,8 @@ def admintools():
     )
     paginated_projects = query.paginate(page=page, per_page=per_page, error_out=False)
     print("Total items:", paginated_projects.total)
+    
+    metaData=g.metaData
     print("Total pages:", paginated_projects.pages)
 
     # Calculate upvotes and downvotes for each project
@@ -2384,34 +2349,33 @@ def admintools():
     project_count = Project.query.filter_by(is_mapobject=False).count()
     mapobject_count = Project.query.filter_by(is_mapobject=True).count()
     bookmark_count = Bookmark.query.count()
-
+    
     # Check if it's an AJAX request
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         request_type = request.args.get("request_type")
         if request_type == "map_object":
             return render_template(
                 "partials/mapobject_list_section.html",
-                paginated_map_objects=paginated_map_objects,
+                paginated_map_objects=paginated_map_objects, metaData=metaData,
             )
         elif request_type == "project":
             return render_template(
                 "partials/project_list_section.html",
-                paginated_projects=paginated_projects,
+                paginated_projects=paginated_projects, 
                 sort=sort,
-                search_query=search_query,
+                search_query=search_query, metaData=metaData,
             )
         elif request_type == "comment":
             return render_template(
-                "partials/comments_section.html", paginated_comments=paginated_comments
-            )
+                "partials/comments_section.html", paginated_comments=paginated_comments,  metaData=metaData
+            ) 
         elif request_type == "user":
             return render_template(
-                "partials/user_list_section.html", paginated_users=paginated_users
+                "partials/user_list_section.html", paginated_users=paginated_users, metaData=metaData,
             )
-
     # Normal request
     return render_template(
-        "/admintools/index.html",
+        "admintools.html",
         paginated_projects=paginated_projects,
         paginated_map_objects=paginated_map_objects,
         paginated_comments=paginated_comments,
@@ -2433,6 +2397,7 @@ def admintools():
         top_commented_projects=top_commented_projects,
         category_counts=category_counts,
         active_users=active_users,
+        # metaData=metaData,
     )
 
 
@@ -2519,10 +2484,6 @@ def delete_map_object(map_object_id):
 @app.route("/verify_admin_otp", methods=["GET", "POST"])
 @login_required
 def verify_admin_otp():
-    session["admin_verified"] = True
-    flash("OTP Verified. Access granted to admin tools.", "success")
-    return redirect(url_for("admintools"))
-
     # Ensure the user is an admin
     if current_user.id != 1:
         flash("Access Denied: You are not authorized to perform this action.", "danger")
@@ -2538,9 +2499,9 @@ def verify_admin_otp():
             return redirect(url_for("admintools"))
         else:
             flash("Invalid OTP. Please try again.", "danger")
-
+    metaData=g.metaData
     return render_template(
-        "verify_admin_otp/index.html"
+        "verify_admin_otp/index.html", metaData=metaData,
     )  # Ensure this template exists for OTP input
 
 
@@ -2795,6 +2756,7 @@ def comment(project_id):
 
 @app.route("/bookmarked")
 def bookmarked():
+    metaData=g.metaData
     if current_user.is_authenticated:
         user_bookmarked_projects = (
             Project.query.join(Bookmark, Bookmark.project_id == Project.id)
@@ -2802,7 +2764,7 @@ def bookmarked():
             .all()
         )
         return render_template(
-            "bookmarked.html", user_bookmarked_projects=user_bookmarked_projects
+            "bookmarked.html", user_bookmarked_projects=user_bookmarked_projects, metaData=metaData
         )
     else:
         return redirect(url_for("login"))
@@ -2853,7 +2815,7 @@ def profil(project_page=1, map_object_page=1, comment_page=1):
             .order_by(Comment.timestamp.desc())
             .paginate(page=comment_page, per_page=per_page, error_out=False)
         )
-
+        logging.debug(paginated_comments)
         bookmarked_projects = (
             Project.query.join(Bookmark, Bookmark.project_id == Project.id)
             .filter(Bookmark.user_id == current_user.id)
@@ -2934,7 +2896,7 @@ def profil(project_page=1, map_object_page=1, comment_page=1):
         paginated_projects = None
         paginated_map_objects = None
         paginated_comments = None
-
+    metaData=g.metaData
     # Check if it's an AJAX request
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         requested_section = request.args.get("section")
@@ -2946,6 +2908,7 @@ def profil(project_page=1, map_object_page=1, comment_page=1):
                 project_page=project_page,
                 map_object_page=map_object_page,
                 user_statistics=user_statistics,
+                metaData=metaData,
             )
         elif requested_section == "map_objects":
             return render_template(
@@ -2954,6 +2917,7 @@ def profil(project_page=1, map_object_page=1, comment_page=1):
                 project_page=project_page,
                 comment_page=comment_page,
                 user_statistics=user_statistics,
+                metaData=metaData
             )
         elif requested_section == "projects":
             return render_template(
@@ -2962,6 +2926,7 @@ def profil(project_page=1, map_object_page=1, comment_page=1):
                 map_object_page=map_object_page,
                 comment_page=comment_page,
                 user_statistics=user_statistics,
+                metaData=metaData
             )
 
     # Render the full page for a normal request
@@ -2974,6 +2939,7 @@ def profil(project_page=1, map_object_page=1, comment_page=1):
         user_statistics=user_statistics,
         is_authenticated=current_user.is_authenticated,
         bookmarks=bookmarks,
+        metaData=metaData,
     )
 
 
@@ -2992,23 +2958,26 @@ def get_user_statistics():
 
 @app.route("/erfolge")
 def erfolge():
+    metaData=g.metaData
     # Additional logic can be added here if needed
-    return render_template("erfolge.html")
+    return render_template("erfolge.html", metaData=metaData)
 
 
 @app.route("/ueber")
 def ueber():
     ip_address = request.remote_addr
+    metaData=g.metaData
     WebsiteViews.add_view(ip_address)
     # Additional logic can be added here if needed
-    return render_template("ueber/index.html")
+    return render_template("ueber/index.html", metaData=metaData)
 
 @app.route("/privacy")
 def privacy():
     ip_address = request.remote_addr
     WebsiteViews.add_view(ip_address)
+    metaData=g.metaData
     # Additional logic can be added here if needed
-    return render_template("privacy/index.html")
+    return render_template("privacy/index.html", metaData=metaData)
 
 
 @app.route("/delete_project/<int:project_id>", methods=["POST"])
@@ -3141,8 +3110,8 @@ def verify_otp():
         else:
             logging.debug("OTP verification failed")
             flash("Invalid OTP", "error")
-
-    return render_template("verify_otp/index.html")
+    metaData=g.metaData
+    return render_template("verify_otp/index.html", metaData=metaData)
 
 
 @app.route("/password_recovery", methods=["GET", "POST"])
@@ -3163,7 +3132,8 @@ def password_recovery():
             return redirect(url_for("verify_otp"))
         else:
             flash("Ihre Handynummer not found", "error")
-    return render_template("password_recovery.html")
+    metaData=g.metaData
+    return render_template("password_recovery.html", metaData=metaData)
 
 
 @app.route("/download_data")
@@ -3205,19 +3175,7 @@ def load_user(user_id):
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    user = User.query.filter_by(phone_number="+436703596614").first()
-    # login_user({
-    #     "id":1,
-    #     "phone_number":1234,
-    #     "name":"test",
-    #     "is_admin": True,
-    #     "is_active":True
-    # })
-    print(user)
-    login_user(user)
 
-    logging.debug("Login successful")
-    return jsonify(success=True)
     # Capture 'next' parameter or set to index if not present
     next_page = request.args.get("next") or url_for("index")
     logging.debug(
@@ -3236,8 +3194,8 @@ def login():
         else:
             logging.debug("Login failed")
             return jsonify(success=False)
-
-    return render_template("login/index.html", next=next_page)
+    metaData=g.metaData
+    return render_template("login/index.html", next=next_page, metaData=metaData)
 
 
 @app.route("/vote/<int:project_id>", methods=["GET", "POST"])
@@ -3254,7 +3212,8 @@ def single_vote(project_id):
         db.session.commit()
         flash('Your vote has been recorded!', 'success')
         return redirect(url_for("index"))
-    return render_template("vote.html", project=project)
+    metaData=g.metaData
+    return render_template("vote.html", project=project, metaData=metaData)
 
 
 @app.route("/get_project_data/<int:project_id>")

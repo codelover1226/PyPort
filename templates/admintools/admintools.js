@@ -1,3 +1,10 @@
+function submitForm() {
+    document.getElementById("sortForm").submit();
+  }
+
+  function confirmDeletion() {
+    return confirm("Are you sure you want to delete this project?");
+  }
 document.addEventListener('DOMContentLoaded', function() {
   // Replace 'None' with '...' in all initial paginations
   const paginationContainers = document.querySelectorAll('.pagination-container');
@@ -243,9 +250,9 @@ function extractTotalPagesFromPagination(paginationElement) {
   return pageNumbers.length > 0 ? Math.max(...pageNumbers) : 1;
 }
 // Submit form when sorting options change or search input keyup event
-function submitForm() {
-  searchAndSortProjects();
-}
+// function submitForm() {
+//   searchAndSortProjects();
+// }
 
 function searchUsers() {
   const searchName = document.getElementById('searchUserByName').value;
@@ -500,7 +507,9 @@ document.getElementById('toggleReportedProjects').addEventListener('click', func
 });
 
 function submitExportForm() {
+  
   var formData = new FormData(document.getElementById("exportForm"));
+  console.log(formData);
   formData.forEach(function(value, key) {});
   fetch('{{ url_for("export_projects") }}', {
       method: 'POST',

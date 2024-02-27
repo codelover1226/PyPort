@@ -174,6 +174,8 @@ document.querySelectorAll('.control-bar .c-button').forEach(button => {
 
 
 function toggleSection(sectionId) {
+    
+    console.log(sectionId)
     const section = document.getElementById(sectionId);
     const projectProposalsSection = document.getElementById('projectProposalsSection');
     const projectProposalsButton = document.getElementById('toggleProjectProposals');
@@ -234,7 +236,7 @@ document.getElementById('toggleUsers').addEventListener('click', function() {
 });
 
 function submitExportForm() {
-    console.debug("Export form submitted.");
+    
     var formData = new FormData(document.getElementById("exportForm"));
     formData.forEach(function(value, key) {
         console.debug("Form Data - Key:", key, "Value:", value);
@@ -535,6 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentOpenSection = null;
 
     function toggleSection(sectionId) {
+        
         const section = document.getElementById(sectionId);
         if (!section) {
             console.error("Section not found:", sectionId);

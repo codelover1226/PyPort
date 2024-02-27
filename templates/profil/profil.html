@@ -1,6 +1,5 @@
 <div style="    display: flex; flex-direction: column;min-height: calc(100vh - 182px);">
-
-  <div class="filter-bar ">
+    <div class="filter-bar ">
     <button id="toggleProjectProposals" class="c-button" data-section-id="projectProposalsSection">Projektvorschläge</button>
     <button id="toggleLesezeichen" class="c-button" data-section-id="bookmarksSection">Lesezeichen</button>
     <button id="toggleNotes" class="c-button" data-section-id="notesSection">Notizen</button>
@@ -32,11 +31,7 @@
         <div id="projects-container"> {% with project_page=project_pagination.page, map_object_page=map_object_pagination.page, comment_page=comment_pagination.page %} {% include 'partials/projects_section.html' %} {% endwith %} </div>
       </div>
     </div>
-    <div id="notesSection" style="display: none;">
-      <div class="info-text-field2-c">
-        <div id="map-objects-container"> {% with project_page=project_pagination.page, map_object_page=map_object_pagination.page, comment_page=comment_pagination.page %} {% include 'partials/map_objects_section.html' %} {% endwith %} </div>
-      </div>
-    </div>
+
     <div id="bookmarksSection" style="display: none;">
       <div class="info-text-field3-c">
         <div id="bookmarked-projects-container"> {% with bookmarked_projects=user_bookmarked_projects %} {% include 'partials/bookmarked_projects_section.html' %} {% endwith %} </div>
@@ -72,6 +67,11 @@
         </div>
       </div>
       <a id="download-link" href="#" style="display: none;"></a>
+    </div>
+    <div id="notesSection" style="display: none;">
+      <div class="info-text-field2-c">
+        <div id="map-objects-container"> {% with project_page=project_pagination.page, map_object_page=map_object_pagination.page, comment_page=comment_pagination.page %} {% include 'partials/map_objects_section.html' %} {% endwith %} </div>
+      </div>
     </div>
   </div>
   

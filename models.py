@@ -83,6 +83,7 @@ class Project(db.Model):
             "author": self.author,
             "is_important": self.is_important,
             "p_reports": self.p_reports,
+            "view_count": self.view_count,
             "is_featured": self.is_featured  # Include new field
         }
 
