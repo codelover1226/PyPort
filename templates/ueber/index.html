@@ -3,6 +3,7 @@
 {% block head_section %}
     <title>Open Data - Stimmungskompass</title>
     <link rel="stylesheet" href="{{ url_for('serve_image', filename='ueber.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 {% endblock %}
 
 {% block header %}
@@ -18,6 +19,6 @@
 {% endblock %}
 
 {% block scripts %}
-{% include 'login/login.js' %}
+{% include 'ueber/ueber.js' %}
 {% endblock %}
 

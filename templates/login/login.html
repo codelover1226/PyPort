@@ -1,3 +1,5 @@
+<div class="page-container">
+
 <div class="logo-container" onclick="redirectToIndex()">
     <a href="/">
       <img src="{{ url_for('serve_image', filename='logo.png') }}" alt="Logo" class="logo">
@@ -5,9 +7,11 @@
   </div>
   <div class="container">
     <!-- Left side - Login Section -->
+	
     <div class="login-section">
+	
       <div style="text-align: center !important;">
-        <h2>Melden Sie sich ein, um Beiträge zu posten.</h2>
+        <h2>Melden Sie sich ein, um Beiträge und Kommentare zu posten.</h2>
       </div>
       <a href="{{ url_for('google_login') }}" class="button">Mit Google anmelden</a>
       <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" style="display:none"></div>
@@ -32,3 +36,4 @@
       <img src="{{ url_for('serve_image', filename='login_titleimage.png') }}" alt="Cover Image" class="cover-image">
     </div>
   </div>
+    </div>

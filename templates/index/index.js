@@ -127,3 +127,5 @@ navigator.serviceWorker.register('/service-worker.js')
     .catch(function(error) {
     });
 }
+
+console.log("Is Authenticated: {{ current_user.is_authenticated }}");

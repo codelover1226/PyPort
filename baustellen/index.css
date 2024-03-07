@@ -1,0 +1,1270 @@
+img {
+  max-width: 100%;
+  height: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+:root {
+  color-scheme: light dark !important;
+}
+
+
+.info-box-icon {
+  max-width: 70px;
+  /* Adjust this value as needed */
+  height: auto;
+  /* Maintain aspect ratio */
+}
+
+
+
+
+.app-content {
+  /* Apply a top padding/margin or background as needed */
+  padding-top: env(safe-area-inset-top); /* Use environment variables for dynamic spacing */
+  background-color: #003056; /* This color extends to the top, behind the status bar */
+}
+
+#ios-install-prompt {
+    position: fixed; /* Keep it fixed during scrolling */
+    bottom: 0; /* Position at the bottom */
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 48, 86, 0.9); /* Your color */
+    color: white;
+    padding: 10px;
+    text-align: center;
+    box-sizing: border-box;
+    z-index: 1001; /* Above other content */
+}
+
+
+#ios-install-prompt p {
+    margin: 0 auto;
+    padding: 0 5px; /* Adjust padding */
+    font-size: 14px; /* Adjust font size for readability */
+    word-wrap: break-word; /* Prevent overflow */
+}
+
+#ios-install-prompt img {
+    width: 24px; /* Adjust image size */
+    vertical-align: middle;
+    margin: 0 5px;
+}
+
+#close-prompt {
+    display: block;
+    margin: 10px auto;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2874A6; /* Button color */
+    color: white;
+    font-size: 14px; /* Button font size */
+}
+		
+		
+		
+		
+		
+@font-face {
+  font-family: 'MaisonNeue';
+
+  font-weight: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaisonNeue';
+
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaisonNeue';
+
+  font-style: italic;
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaisonNeue';
+ 
+  font-weight: 600; /* Demi is often considered semi-bold or 600 weight */
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaisonNeue';
+
+  font-weight: 300; /* Light is often 300 weight */
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaisonNeueMono';
+ 
+  font-weight: normal;
+  font-display: swap;
+}
+		
+		
+
+
+.bold-text {
+  font-family: 'MaisonNeue';
+  font-weight: bold;
+}
+
+.italic-text {
+  font-family: 'MaisonNeue';
+  font-style: italic;
+}
+
+.demi-text {
+  font-family: 'MaisonNeue';
+  font-weight: 600;
+}
+
+.light-text {
+  font-family: 'MaisonNeue';
+  font-weight: 300;
+}
+
+.mono-text {
+  font-family: 'MaisonNeueMono', monospace;
+}
+
+
+body {
+  font-family: MaisonNeue, Segoe UI, Helvetica Neue, -apple-system, system-ui, BlinkMacSystemFont, Roboto, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+
+  background-color: #f5f1e4;
+  color: black;
+  margin: 0;
+  /* Remove default margin */
+  padding: 0;
+  /* Remove default padding */
+}
+
+.project-description {
+  font-style: italic;
+  /* Make text italic */
+  padding: 10px;
+  /* Optional: Add some padding for better presentation */
+}
+
+   /* Styling the scrollbar */
+   ::-webkit-scrollbar {
+     width: 12px;
+     /* Adjust the width of the scrollbar */
+   }
+
+   /* Styling the track of the scrollbar */
+   ::-webkit-scrollbar-track {
+     background: #f5f1e4;
+     /* Light grey track */
+     border-radius: 10px;
+     /* Round corners of the track */
+   }
+
+   /* Styling the thumb of the scrollbar */
+   ::-webkit-scrollbar-thumb {
+     background: #9b9b9b;
+     /* Black thumb */
+   }
+
+   /* Hover effect on the thumb of the scrollbar */
+   ::-webkit-scrollbar-thumb:hover {
+     background: #555;
+     /* Darker shade of grey on hover */
+   }
+
+
+
+
+.top-bar {
+  background-color: #003056;
+  /* Background color of the top bar */
+  height: 80px;
+  /* Height of the top bar */
+  width: 100%;
+  /* Full width of the screen */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px;
+  /* Add padding to the left and right */
+  box-sizing: border-box;
+  /* Include padding in width calculation */
+  align-items: center;
+  /* This ensures vertical alignment */
+  z-index: 10000;
+  /* Ensures the top bar is above Andere content */
+  position: fixed;
+  /* Fixed positioning to keep the bar at the top */
+  top: 0;
+  /* Align to the top */
+  left: 0;
+  /* Align to the left */
+}
+
+.top-bar a .logo {
+  max-width: auto;
+  /* Adjust this value as needed */
+  max-height: 80px;
+  /* Ensure the logo fits within the bar's height */
+  margin: auto;
+}
+
+/* Styles for buttons inside links in the top bar */
+.top-bar a button {
+  transition: width 0.3s ease;
+  /* Transition for the transform property */
+  border-radius: 30px;
+  /* If you want to keep the border-radius */
+  /* Add any Andere button-specific styles here */
+}
+
+/* Hover effect for buttons inside links in the top bar */
+
+
+
+/* Hover effect for links in the top bar */
+.top-bar a:not(:has(button)):hover::after {
+  transform: scaleX(1);
+  /* Show the underscore on hover */
+  transform-origin: left;
+}
+
+.top-bar a {
+  color: white;
+  text-decoration: none;
+  margin-right: 20px;
+  /* Add spacing between links */
+  font-size: 18px;
+  /* Increase text size */
+  font-weight: bold;
+  /* Make text bold */
+  position: relative;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  /* Transition for color and text shadow */
+}
+
+
+/* Exclude the logo link from having the underline effect */
+.top-bar a[href="/"]:hover::after {
+  content: none;
+}
+
+/* Underline effect for links that do not contain the logo */
+.top-bar a:not(:has(> .logo))::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s;
+}
+
+/* Additional styles for .logo to ensure it fits well in the top bar */
+.top-bar a .logo {
+  max-width: auto;
+  /* Adjust this value as needed */
+  max-height: 80px;
+  /* Ensure the logo fits within the bar's height */
+  margin: auto;
+}
+
+.top-bar a:hover {
+  color: #a8c0ff;
+  /* Change color on hover */
+  text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.7);
+  /* Add text shadow on hover */
+}
+
+.top-bar a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s;
+}
+
+/* Hover effect for buttons inside links in the top bar */
+
+
+/* Underline effect for links that do not contain buttons */
+.top-bar a:not(:has(> button))::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s;
+}
+
+/* Hover effect to show underline for links that do not contain buttons */
+.top-bar a:not(:has(> button)):hover::after {
+  transform: scaleX(1);
+}
+
+#hamburger-button {
+  display: none;
+  /* Hidden by default */
+  font-size: 30px;
+  /* Icon size */
+  color: white;
+  /* Icon color */
+  background: none;
+  /* No background */
+  border: none;
+  /* No border */
+  cursor: pointer;
+  /* Pointer cursor */
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 30px;
+  transition: width 0.3s ease;
+}
+
+.logo {
+  max-width: 1000px;
+  /* Increase the max-width to make it bigger */
+  margin-bottom: 30px;
+}
+
+
+
+.form-container {
+  margin: 40px auto;
+  width: 60%;
+  background-color: #fff;
+  padding: 40px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 30px;
+  box-sizing: border-box;
+}
+
+.input-field {
+  margin-bottom: 30px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #333;
+}
+
+input[type="text"],
+select,
+#description-editor,
+#benefit-editor {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  color: #333;
+  box-sizing: border-box;
+}
+
+input[type="file"] {
+  border: none;
+}
+
+.button {
+  border-radius: 30px;
+  padding: 15px;
+  background-color: white;
+  font-weight: bold;
+  color: black;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* Smooth transition for background color */
+}
+
+.publish-button {
+  width: 100%;
+  /* Full width */
+  padding: 20px 0;
+  /* Vertical padding */
+  font-size: 20px;
+  /* Font size */
+  background-color: #2874A6;
+  /* Background color */
+  color: white;
+  /* Text color */
+  border-radius: 30px;
+  /* Border radius */
+  border: none;
+  /* No border by default */
+  cursor: pointer;
+  /* Pointer cursor on hover */
+  transition: width transform 0.3s ease;
+  /* Smooth transition for transform and border */
+}
+
+.publish-button:hover {
+  transform: scale(1.005);
+  /* Scale up on hover */
+  border: 2px solid black;
+  /* Thin black border on hover */
+}
+
+
+.project img {
+  max-width: 100%;
+  height: auto;
+  max-width: 300px;
+  /* Adjust the width as needed */
+  max-height: 200px;
+  /* Adjust the height as needed */
+  height: auto;
+  /* Maintain aspect ratio */
+  width: auto;
+  /* Maintain aspect ratio */
+  border-radius: 30px;
+  /* Optional: if you want rounded corners */
+}
+
+
+/* Base styles for project thumbnails */
+.project-thumbnail {
+  background-color: rgba(40, 116, 166, 0.3);
+  border-radius: 30px;
+  margin: 10px;
+  padding: 10px;
+  display: flex;
+  /* Changed to flex to better control the layout */
+  flex-direction: column;
+  /* Stack items vertically */
+  align-items: center;
+  /* Center items horizontally */
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
+       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+    transition: box-shadow 0.3s ease-out; /* Adjusted for shadow or other properties */
+    will-change: auto; /* Default state, only specify if needed for performance */
+}
+
+/* Hover effect for project thumbnails */
+   .project-thumbnail:hover {
+     transform: scale(1.005);
+     transition: width 0.3s ease;
+	     box-shadow: 0 10px 15px rgba(0,0,0,0.1); /* Example shadow */
+
+   }
+
+/* Image style within project thumbnails */
+.project-thumbnail img {
+  width: 90%;
+  margin-top: 20px;
+  height: 400px;
+  /* Fixed height for images */
+  object-fit: cover;
+  border-radius: 30px;
+}
+
+/* Text style inside project thumbnails */
+.project-thumbnail h2,
+.project-thumbnail p {
+  margin: 0;
+  padding: 5px 0;
+  width: 90%;
+  /* Adjust the width to match the image */
+  text-align: center;
+    font-style: normal; /* Override italic style */
+}
+
+.project-thumbnail p {
+  font-family: 'Open Sans', sans-serif;
+  /* Change to your preferred font */
+  position: relative;
+  bottom: auto;
+  overflow: visible;
+  text-align: center;
+  width: 100%;
+  display: block;
+  font-weight: normal;
+  /* Ensure the font weight is normal */
+  font-size: 18px;
+  /* Adjust as needed for h1 */
+}
+
+
+@media only screen and (max-width: 1080px) {
+  .project-thumbnail h1 {
+    font-size: 24px;
+    /* Adjust as needed for h1 */
+  }
+
+  .project-thumbnail h2 {
+    font-size: 22px;
+    /* Adjust as needed for h2 */
+  }
+
+  .project-thumbnail h3 {
+    font-size: 20px;
+    /* Adjust as needed for h3 */
+  }
+
+  .project-thumbnail p {
+    font-size: 18px;
+    /* Adjust as needed for paragraph text */
+  }
+}
+
+
+
+
+
+.voting-bar {
+  width: 90%;
+  height: 20px;
+  background-color: #ddd;
+  border-radius: 30px !important;
+  margin-top: 0px;
+  display: flex;
+}
+
+.upvotes {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 30px !important;
+  transition: width 0.3s ease;
+}
+
+.downvotes {
+  height: 100%;
+  background-color: #9A031E;
+  border-radius: 30px !important;
+  transition: width 0.3s ease;
+}
+
+.upvotes,
+.downvotes {
+  /* Existing styles */
+  position: relative;
+  /* Ensure the position is relative for child positioning */
+}
+
+.upvotes span,
+.downvotes span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  /* Choose a contrasting color */
+  font-size: 12px;
+  /* Adjust the font size */
+  white-space: nowrap;
+  pointer-events: none;
+  /* Prevents blocking click events */
+}
+
+.projects-header {
+  text-align: center;
+  /* Center the content */
+  margin-bottom: 20px;
+  /* Add some space below the header */
+}
+
+.projects-header h1 {
+  margin: 0;
+  /* Remove default margin */
+  padding: 10px 0;
+  /* Add some vertical padding */
+}
+
+.projects-header p {
+  margin: 0;
+  /* Remove default margin */
+  margin-left: 8px;
+  margin-right: 8px;
+  color: #003056;
+  /* Specific color for the undertitle */
+  font-style: italic;
+  /* Optional: make it italic */
+  font-size: 16px;
+  /* Set font size to 18 pixels for mobile screens */
+
+}
+
+
+/* Desktop screens (larger than 1200px) */
+@media (min-width: 1445px) {
+  .project-thumbnail {
+    width: calc(33.333% - 20px);
+    /* Three items per row */
+    height: auto;
+    /* Height adjusts based on content */
+  }
+}
+
+/* Medium screens (between 1024px and 1199px) */
+@media (min-width: 1080px) and (max-width: 1445px) {
+  .project-thumbnail {
+    width: calc(50% - 20px);
+    /* Two items per row */
+    height: auto;
+    /* Height adjusts based on content */
+  }
+}
+
+/* Mobile screens (less than 1024px) */
+@media (max-width: 1088px) {
+  .project-thumbnail {
+    width: calc(100% - 20px);
+    /* Full width */
+    height: auto;
+    /* Height adjusts based on content */
+  }
+
+  .project-thumbnail img {
+    height: auto;
+    /* Adjust image height for mobile */
+  }
+}
+
+.project-list {
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bottom-bar {
+  background-color: #003056;
+  /* Dark blue background */
+  color: white;
+  /* White text color */
+  text-align: center;
+  /* Center align text */
+  padding: 1px 0;
+  /* Padding on top and bottom */
+  width: 100%;
+  /* Full width */
+  box-sizing: border-box;
+  /* Include padding in width calculation */
+}
+
+
+
+
+.index-image {
+  position: relative;
+  /* Change positioning context to relative */
+  width: 100%;
+  object-fit: cover;
+  max-height: 500px;
+  border-radius: 0px;
+}
+
+
+
+.cover-text-container {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.3);
+  /* Black background with 70% opacity */
+  padding: 25px;
+  border-radius: 80px;
+  text-align: center;
+}
+
+.cover-text-container h1,
+.cover-text-container p {
+    filter: url(#text-border-filter); /* Apply the SVG filter */
+    color: white; /* Text color */
+}
+
+
+.cover-text-container h1 {
+  font-size: 40px;
+  color: white;
+  margin: 0;
+  padding-bottom: 10px;
+ 
+}
+
+.index-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover; /* Cover the area without stretching */
+}
+
+
+.cover-text-container p {
+  font-size: 30px;
+  color: white;
+  margin: 0;
+ 
+}
+
+.info-box-container {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 20px;
+}
+
+.info-box {
+  background-color: #1b1b1b;
+  border-radius: 30px;
+  padding: 20px;
+  text-align: center;
+  transition: width 0.3s ease;
+  width: 30%; /* or a fixed width, e.g., 300px */
+  /* Set a fixed width for each box */
+}
+
+.info-box:hover {
+  transform: scale(1.005);
+}
+
+.user-info {
+  color: white;
+  /* Set the text color to match other links */
+  margin-right: 20px;
+  /* Right margin for spacing */
+  font-size: 18px;
+  /* Font size similar to other links */
+  font-weight: bold;
+  /* Bold text */
+  align-self: center;
+  /* Align vertically within the flex container */
+}
+
+.info-box-icon {
+  max-width: 70px;
+  /* Icon size */
+  border-radius: 50%;
+  /* Make it circular */
+}
+
+.info-box-title {
+  color: white;
+  font-size: 30px;
+  margin: 10px 0;
+}
+
+.info-box-undertitle {
+  color: white;
+  font-size: 16px;
+}
+
+/* Specific colors for each box */
+.box-red {
+  background-color: #06467c;
+}
+
+.box-blue {
+  background-color: #02569d;
+}
+
+.box-green {
+  background-color: #2874A6;
+}
+
+.info-text-field {
+  background-color: #F4F4F8;
+  /* Light grey background */
+  width: 100%;
+  /* Full width */
+  height: 300px;
+  /* Specified height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+  /* Include padding in width calculation */
+}
+
+.info-text-container {
+  width: 50%;
+  /* Width of the text container */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.info-text-title {
+  font-size: 30px;
+  color: black;
+  margin-bottom: 10px;
+}
+
+.info-text-undertitle {
+  font-size: 20px !important;
+  color: black;
+  margin-top: 10px;
+}
+
+@media only screen and (max-width: 1445px) {
+  .top-bar a button {
+    transition: width 0.3s ease;
+    /* Transition for the transform property */
+    border-radius: 30px;
+    /* If you want to keep the border-radius */
+    padding: 7px;
+    /* Add any Andere button-specific styles here */
+  }
+
+}
+
+@media only screen and (max-width: 1080px) {
+
+  html,
+  body {
+    max-width: 100vw;
+	            min-height: 100vh; /* Ensure the body takes up at least the whole viewport height */
+				            background-color: #f5f1e4; /* Your site's background color */
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Hide horizontal scrollbar */
+  }
+  
+  .extended-background {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            z-index: -1; /* Ensure it doesn't overlap your content */
+            background-color: #003056; /* The color you want at the bottom */
+        }
+		
+		
+		
+
+  .info-box-title {
+    color: white;
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  
+
+  .top-bar {
+    flex-direction: column;
+    /* Stack items vertically */
+    height: auto;
+    /* Adjust height automatically */
+  }
+
+  .top-bar a .logo {
+    margin-left: auto;
+    /* Adjust logo position */
+    margin-right: auto;
+  }
+
+  .top-bar {
+    flex-direction: row;
+    /* Align items horizontally */
+    justify-content: space-between;
+    /* Space between items */
+    align-items: center;
+    /* Vertically center items */
+    padding: 10px 15px;
+    /* Consistent padding */
+  }
+
+
+
+  .top-bar a {
+    display: flex;
+    /* Flex container for the logo */
+    align-items: center;
+    /* Vertically center logo */
+    margin: 0;
+    /* Remove any default margin */
+  }
+
+  .top-bar a .logo {
+    max-width: 270px;
+    /* Adjust logo size */
+    max-height: 350px;
+    /* Adjust height automatically */
+  }
+
+
+  .hamburger-menu {
+    position: absolute;
+    /* Adjust to absolute positioning */
+    right: 10px;
+    /* Align to the right with some space */
+    top: 10px;
+    /* Align to the top with some space */
+    z-index: 1000;
+    /* Ensure it's above other elements */
+  }
+
+  body {
+    font-size: 14px;
+    /* Smaller font size */
+  }
+
+  .form-container {
+    width: 90%;
+    /* Full width with some margin */
+    padding: 20px;
+    /* Smaller padding */
+  }
+
+  .publish-button {
+    font-size: 18px;
+    /* Slightly smaller font size */
+    padding: 15px 0;
+    /* Adjust padding */
+  }
+
+
+  /* Hamburger Menu Button */
+
+
+  /* Navigation Overlay */
+  .nav-overlay {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Fixed position */
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    /* Semi-transparent black */
+    overflow-x: hidden;
+    /* Hide horizontal overflow */
+    transition: 0.5s;
+    /* Smooth transition for opening/closing */
+    z-index: 1000;
+    /* High z-index to ensure it's on top */
+  }
+
+  .nav-overlay-active {
+    display: block;
+  }
+
+  .nav-overlay-active .main-content {
+    pointer-events: none;
+  }
+}
+
+/* Mobile Devices */
+@media only screen and (max-width: 1080px) {
+
+  html,
+  body {
+    max-width: 100vw;
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Hide horizontal scrollbar */
+  }
+
+  .hamburger-menu {
+    position: absolute;
+    /* Adjust to absolute positioning */
+    right: 10px;
+    /* Align to the right with some space */
+    top: 10px;
+    /* Align to the top with some space */
+    z-index: 1000;
+    /* Ensure it's above other elements */
+  }
+
+
+
+
+  #nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  #nav-links a {
+    padding: 20px;
+    /* Larger clickable area */
+    font-size: 24px;
+    /* Larger font size */
+  }
+}
+
+/* Mobile Devices */
+@media only screen and (max-width: 1080px) {
+
+  html,
+  body {
+    max-width: 100vw;
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Hide horizontal scrollbar */
+  }
+
+  .hamburger-menu {
+    position: absolute;
+    /* Adjust to absolute positioning */
+    right: 10px;
+    /* Align to the right with some space */
+    top: 10px;
+    /* Align to the top with some space */
+    z-index: 1000;
+    /* Ensure it's above other elements */
+  }
+
+
+
+  #hamburger-button {
+    display: block;
+    /* Show the button on mobile */
+    margin: 0;
+    /* Remove any margin */
+    align-self: center;
+    /* Explicitly center the button vertically */
+  }
+
+
+  #nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    #nav-links a {
+      padding: 20px;
+      /* Padding for each link */
+      font-size: 24px;
+      /* Font size for links */
+    }
+  }
+
+  @media only screen and (max-width: 1080px) {
+
+    html,
+    body {
+      max-width: 100vw;
+      /* Prevent horizontal overflow */
+      overflow-x: hidden;
+      /* Hide horizontal scrollbar */
+    }
+
+    .hamburger-menu {
+      position: absolute;
+      /* Adjust to absolute positioning */
+      right: 10px;
+      /* Align to the right with some space */
+      top: 10px;
+      /* Align to the top with some space */
+      z-index: 1000;
+      /* Ensure it's above other elements */
+    }
+
+    .info-box-container {
+      flex-direction: column;
+      align-items: center;
+    }
+
+
+    .info-box {
+      width: 80%;
+      /* Adjust width to fit mobile screens */
+      margin-bottom: 20px;
+      /* Add some space between the boxes */
+    }
+  }
+
+  @media only screen and (max-width: 1080px) {
+
+    html,
+    body {
+      max-width: 100vw;
+      /* Prevent horizontal overflow */
+      overflow-x: hidden;
+      /* Hide horizontal scrollbar */
+	  
+	  margin-top: constant(safe-area-inset-top); /* Respect the safe area */
+            margin-top: env(safe-area-inset-top); /* Respect the safe area */
+    }
+
+    .hamburger-menu {
+      position: absolute;
+      /* Adjust to absolute positioning */
+      right: 10px;
+      /* Align to the right with some space */
+      top: 10px;
+      /* Align to the top with some space */
+      z-index: 1000;
+      /* Ensure it's above other elements */
+    }
+
+    .cover-text-container h1 {
+      margin-top: 45px;
+      font-size: 5.5vw;
+      /* Increase font size for smaller screens */
+    }
+
+    .cover-text-container p {
+      font-size: 4vw;
+      /* Increase font size for smaller screens */
+    }
+
+    .cover-text-container {
+      background-color: rgba(0, 0, 0, 0.0) !important;
+      /* Black background with 70% opacity */
+      top: 60%;
+      width: 90%;
+      /* Set the width to 90% of the parent container */
+
+    }
+  }
+
+
+
+
+
+  .cover-text-container {
+    background-color: rgba(0, 0, 0, 0.4);
+  min-height: 150px; /* Adjust based on your content */
+    top: 50%;
+    width: 90%;
+    /* Set the width to 90% of the parent container */
+
+  }
+}
+
+.info-text-title,
+.info-text-undertitle {
+  font-size: 2.5vw;
+  /* Adjust as needed */
+}
+
+@media only screen and (max-width: 1080px) {
+
+  html,
+  body {
+    max-width: 100vw;
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Hide horizontal scrollbar */
+  }
+
+  .hamburger-menu {
+    position: absolute;
+    /* Adjust to absolute positioning */
+    right: 10px;
+    /* Align to the right with some space */
+    top: 10px;
+    /* Align to the top with some space */
+    z-index: 1000;
+    /* Ensure it's above other elements */
+  }
+
+  .info-text-title {
+    font-size: 6vw;
+    /* Larger size for smaller screens */
+  }
+
+  .info-text-undertitle {
+    font-size: 16px !important;
+    /* Larger size for smaller screens */
+  }
+}
+
+@media only screen and (max-width: 1080px) {
+
+  html,
+  body {
+    max-width: 100vw;
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Hide horizontal scrollbar */
+  }
+
+  .hamburger-menu {
+    position: absolute;
+    /* Adjust to absolute positioning */
+    right: 10px;
+    /* Align to the right with some space */
+    top: 10px;
+    /* Align to the top with some space */
+    z-index: 1000;
+    /* Ensure it's above other elements */
+  }
+
+  .info-text-field {
+    height: auto;
+    /* Allow the height to adjust based on content */
+  }
+
+  .info-text-container {
+    width: 80%;
+    /* Reduce the width for tablets */
+  }
+}
+
+@media only screen and (max-width: 1080px) {
+
+  html,
+  body {
+    max-width: 100vw;
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Hide horizontal scrollbar */
+  }
+
+  .hamburger-menu {
+    position: absolute;
+    /* Adjust to absolute positioning */
+    right: 10px;
+    /* Align to the right with some space */
+    top: 10px;
+    /* Align to the top with some space */
+    z-index: 1000;
+    /* Ensure it's above other elements */
+  }
+
+  .info-text-field {
+    height: auto;
+    /* Allow the height to adjust based on content */
+  }
+
+  .info-text-container {
+    width: 90%;
+    /* Reduce the width further for mobile */
+  }
+}

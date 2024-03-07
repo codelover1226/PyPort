@@ -1102,7 +1102,7 @@ def download_images():
         return redirect(url_for("profil"))
 
 
-@app.route("/home")
+@app.route("/")
 def index():
     projects = Project.query.all()
     featured_projects = Project.query.filter_by(is_featured=True).all()
@@ -1142,46 +1142,7 @@ def index():
         featured_projects=featured_projects,
         metaData=metaData,
     )
-@app.route("/")
-def indexOne():
-    projects = Project.query.all()
-    featured_projects = Project.query.filter_by(is_featured=True).all()
-    ip_address = request.remote_addr
-    WebsiteViews.add_view(ip_address)
 
-    # Calculate upvotes and downvotes for each project
-    for project in projects + featured_projects:
-        upvotes = Vote.query.filter_by(project_id=project.id, upvote=True).count()
-        downvotes = Vote.query.filter_by(project_id=project.id, downvote=True).count()
-
-        project.upvotes = upvotes
-        project.downvotes = downvotes
-        project.upvote_percentage = (
-            (upvotes / (upvotes + downvotes) * 100) if (upvotes + downvotes) > 0 else 0
-        )
-        project.downvote_percentage = (
-            (downvotes / (upvotes + downvotes) * 100)
-            if (upvotes + downvotes) > 0
-            else 0
-        )
-
-    # Count projects where is_mapobject is false
-    project_count_non_map = Project.query.filter_by(is_mapobject=False).count()
-
-    # Count projects where is_mapobject is true
-    mapobject_count = Project.query.filter_by(is_mapobject=True).count()
-
-    metaData = g.metaData
-
-
-    return render_template(
-        "index.html",
-        projects=projects,
-        project_count=project_count_non_map,
-        mapobject_count=mapobject_count,
-        featured_projects=featured_projects,
-        metaData=metaData,
-    )
 
 @app.route("/logout")
 @login_required
@@ -3214,12 +3175,7 @@ def load_user(user_id):
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    
-    user = User.query.filter_by(phone_number="+436703596614").first()
-    print(user)
-    login_user(user)
 
-    return jsonify(success=True)
     # Capture 'next' parameter or set to index if not present
     next_page = request.args.get("next") or url_for("index")
     logging.debug(

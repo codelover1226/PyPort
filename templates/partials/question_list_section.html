@@ -1,0 +1,27 @@
+<!-- templates/partials/question_list_section.html -->
+<h2 id="questions-count">Debug: XD {{ questions|length }} questions.</h2>
+
+<div class="stats-container2" id="question-list-container">
+    {% for question in questions %}
+    <div class="stat-box2" id="question-{{ question.id }}">
+        <div><strong>Frage:</strong> {{ question.text }}</div>
+        <div><strong>Author:</strong> {{ question.author }}</div>
+        <div><strong>Am:</strong> {{ question.date.strftime('%d.%m.%Y %H:%M:%S') }}</div>
+        <div><strong>Baustelle:</strong> <a href="/baustellen/{{ question.baustelle_id }}" style="font-weight: bold;">{{ question.baustelle_id }}</a></div>
+        {% if question.answered %}
+            <div><strong>Antwort:</strong> {{ question.answer_text }}</div>
+            <div><strong>Am:</strong> {{ question.answer_date.strftime('%d.%m.%Y %H:%M:%S') }}</div>
+        {% else %}
+            <form method="POST" class="answer-question-form" data-question-id="{{ question.id }}">
+                <input type="hidden" name="question_id" value="{{ question.id }}">
+                <textarea name="answer_text" rows="3" placeholder="Guten Tag..."></textarea>
+                <div><button type="button" class="btn btn-primary submit-answer register-button">Antworten</button></div>
+            </form>
+        {% endif %}
+        <!-- "Löschen" button outside the if-else block -->
+        <button type="button" class="btn btn-danger delete-question register-button" onclick="confirmDeleteQuestion({{ question.id }})" style="margin-top: 3px !important;">Löschen</button>
+    </div>
+    {% else %}
+    <p>Keine Fragen gefunden.</p>
+    {% endfor %}
+</div>

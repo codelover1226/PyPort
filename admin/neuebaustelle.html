@@ -1,0 +1,2981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Baustelle</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+
+</head>
+
+ <style>
+.overlay-button {
+border-radius: 30px;
+padding: 15px;
+background-color: white;
+font-weight: bold;
+color: black;
+border: none;
+cursor: pointer;
+transition: background-color 0.3s ease;
+/* Smooth transition for background color */
+}
+#marker-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.2);
+z-index: 10000;
+}
+#overlay-content {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: white;
+padding: 20px;
+border-radius: 30px;
+width: 80%;
+max-width: 500px;
+text-align: center;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+/* Mobile Styles */
+@media (max-width: 768px) {
+#overlay-content {
+position: absolute;
+top: calc(9vh + 9px); /* Estimate based on viewport height and gap */
+left: 15px;
+right: 15px;
+bottom: 15px; /* Distance from the bottom of the viewport */
+width: auto; /* Allow width to adjust to left and right margins */
+min-width: calc(100% - 30px); /* Ensure it takes at least the width minus margins */
+height: auto; /* Adjust height automatically */
+padding: 20px;
+box-sizing: border-box; /* Include padding in width/height */
+display: flex;
+flex-direction: column;
+justify-content: center; /* Vertically center content */
+align-items: center; /* Horizontally center content */
+background: white;
+border-radius: 30px;
+margin-top: 7.5px !important;
+z-index: 1500 !important;
+overflow: auto; /* Enables scrolling if content is larger than the overlay */
+transform: none;
+}
+#markers-list-overlay {
+position: absolute; /* Changed from fixed to absolute */
+top: calc(9vh + 9px); /* Estimate based on viewport height and gap */
+left: 15px;
+right: 15px;
+word-wrap: break-word; /* Break long words to prevent horizontal overflow */
+bottom: 15px; /* 15px away from the bottom */
+width: auto; /* Allow width to adjust to left and right margins */
+min-width: calc(100% - 30px); /* Ensure it takes at least the width minus margins */
+height: auto; /* Adjust height automatically */
+padding: 20px;
+box-sizing: border-box; /* Include padding in width/height */
+display: none;
+flex-direction: column;
+justify-content: center; /* Vertically center content */
+align-items: center; /* Horizontally center content */
+background: white;
+border-radius: 30px;
+margin-top: 7.5px !important;
+z-index: 1500 !important;
+overflow: auto; /* Enables scrolling if content is larger than the overlay */
+}
+.leaflet-control-layers-toggle {
+display: none !important;
+}
+}
+.p-mobile-confirm {
+font-size: 18px;
+font-weight: bold;
+color: black;
+}
+@media only screen and (max-width: 767px) {
+.mobile-confirm {
+position: fixed;
+height: 150px;
+bottom: 0;
+left: 15px !important;
+right: 15px !important;
+border-radius: 30px;
+margin-bottom: 15px;
+overflow: hidden;
+width: auto;
+overflow-y: auto;
+/* Enables vertical scrolling */
+background: var(--sidebar-bg);
+/* Use variable for background */
+}
+.register-button-c {
+background-color: #003056;
+/* Example color */
+color: white;
+border: none;
+/* Remove the border */
+outline: none;
+/* Remove the outline */
+box-shadow: none;
+/* Remove any shadow that might appear as an outline */
+border-radius: 30px;
+padding: 3px 3px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-weight: bold;
+font-size: 16px !important;
+margin: auto;
+margin-top: 0px !important;
+margin-bottom: 0px;
+cursor: pointer;
+width: 97%;
+box-sizing: border-box;
+/* Include padding in width */
+}
+.p-mobile-confirm {
+font-size: 16px;
+margin-bottom: 6px;
+}
+}
+@media (min-width: 768px) and (max-width: 1080px) {
+.mobile-confirm {
+position: absolute;
+bottom: 15px;
+/* Align with the bottom of #map */
+right: calc(40% + 0px) !important;
+/* Adjusting for sidebar width and right margin */
+background: #f5f1e4;
+padding: 20px;
+border-radius: 30px;
+transform: none;
+/* Remove the translate transform */
+}
+.register-button-c {
+background-color: #003056;
+/* Example color */
+color: white;
+border: none;
+/* Remove the border */
+outline: none;
+/* Remove the outline */
+box-shadow: none;
+/* Remove any shadow that might appear as an outline */
+border-radius: 30px;
+padding: 5px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-weight: bold;
+font-size: 14px !important;
+margin: auto;
+margin-top: 0px !important;
+margin-bottom: 0px;
+cursor: pointer;
+width: 97%;
+box-sizing: border-box;
+/* Include padding in width */
+}
+.p-mobile-confirm {
+font-size: 16px;
+}
+}
+@media only screen and (min-width: 768px) {
+.mobile-confirm {
+position: absolute;
+bottom: 15px;
+/* Align with the bottom of #map */
+right: calc(30% + 15px);
+background: #f5f1e4;
+padding: 20px;
+border-radius: 30px;
+transform: none;
+/* Remove the translate transform */
+}
+.register-button-c {
+background-color: #003056;
+/* Example color */
+color: white;
+border: none;
+/* Remove the border */
+outline: none;
+/* Remove the outline */
+box-shadow: none;
+/* Remove any shadow that might appear as an outline */
+border-radius: 30px;
+padding: 5px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-weight: bold;
+font-size: 16px;
+margin: auto;
+margin-top: 0px !important;
+margin-bottom: 0px;
+cursor: pointer;
+width: 97%;
+box-sizing: border-box;
+/* Include padding in width */
+}
+}
+/* BASIC CSS START */
+body,
+html {
+margin: 0;
+padding: 0;
+overflow: hidden;
+/* Prevent scrolling */
+box-sizing: border-box;
+/* Include padding and border in the element's total width and height */
+font-family: 'Roboto', sans-serif !important;
+background-color: var(--background-color);
+/* Apply background color */
+color: var(--text-color);
+/* Apply text color */
+}
+.leaflet-tile {
+margin: 0 !important;
+padding: 0 !important;
+border-radius: 0 !important;
+/* Removes rounded corners */
+}
+.resistant-h3 {
+color: var(--text-color);
+/* Use the text color based on the current theme */
+/* Add Andere styles as needed */
+}
+@media only screen and (max-width: 1080px) {
+#nav-links .user-info {
+display: block;
+/* Make it a block element */
+width: 100%;
+/* Full width */
+text-align: center;
+/* Center text horizontally */
+margin: 10px 0;
+/* Optional: adjust top and bottom margin as needed */
+}
+}
+#category-filter,
+#sort-filter {
+display: flex;
+justify-content: center;
+margin-bottom: 10px;
+}
+#category-select,
+#sort-select {
+padding: 5px;
+border: 1px solid #ccc;
+border-radius: 5px;
+}
+.marker-item {
+/* Assuming this class is for individual marker items in the list */
+border-bottom: 1px solid #cccccc; /* Thin gray line */
+padding-bottom: 10px; /* Space below the text and above the line */
+margin-bottom: 10px; /* Space between items in the list */
+}
+#markers-list {
+/* Styles for the list containing the markers */
+list-style-type: none; /* Remove default list styling */
+padding: 0; /* Remove default padding */
+margin: 0; /* Remove default margin */
+}
+/* Adjust the #markers-list-overlay */
+#markers-list-overlay {
+overflow: auto;
+word-wrap: break-word; /* Break long words to prevent horizontal overflow */
+/* Allow scrolling inside the overlay */
+padding-bottom: 20px;
+/* Add some padding at the bottom for better spacing */
+}
+/* Ensure the #markers-list has enough space and doesn't overflow */
+.filterx-container {
+display: none !important;
+}
+/* Add this to your CSS file or within a tag in your HTML */
+.button-hover-effect {
+display: inline-block;
+background-color: #111111;
+padding: 5px 7px;
+text-decoration: none;
+border-radius: 30px;
+margin-top: 10px;
+margin-bottom: 10px;
+transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.button-hover-effect:hover {
+transform: scale(1.005);
+background-color: #111111;
+/* Light blue color */
+}
+.voting-bar {
+width: 100%;
+height: 20px;
+background-color: #ddd;
+border-radius: 30px;
+margin-top: 30px;
+display: flex;
+}
+.upvotes {
+height: 100%;
+background-color: #4caf50;
+border-radius: 30px;
+transition: width 0.3s ease;
+}
+.downvotes {
+height: 100%;
+background-color: #9A031E;
+border-radius: 30px;
+transition: width 0.3s ease;
+}
+#landscape-blocker {
+display: none;
+/* Initially hidden */
+position: fixed;
+/* Overlay the whole screen */
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: black;
+/* Black background */
+color: white;
+/* White text color */
+z-index: 9999;
+/* Ensure it's on top of Andere elements */
+display: flex;
+justify-content: center;
+/* Center horizontally */
+align-items: center;
+/* Center vertically */
+text-align: center;
+/* Ensure text alignment is centered */
+}
+.object-item-text {
+color: var(--text-color);
+/* Use CSS variable for dynamic color */
+}
+/* Optional: Add media query for smaller screens if the text is too large */
+@media (max-width: 768px) {
+#landscape-blocker {
+font-size: 16px;
+}
+}
+#portrait-blocker {
+display: none;
+/* Initially hidden */
+position: fixed;
+/* Overlay the whole screen */
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: black;
+/* Black background */
+color: white;
+/* White text color */
+z-index: 9999;
+/* Ensure it's on top of Andere elements */
+display: flex;
+justify-content: center;
+/* Center horizontally */
+align-items: center;
+/* Center vertically */
+text-align: center;
+/* Ensure text alignment is centered */
+}
+/* Optional: Add media query for larger screens */
+@media (min-width: 768px) {
+#portrait-blocker {
+font-size: 20px;
+}
+}
+*,
+*:before,
+*:after {
+box-sizing: inherit;
+/* Inherit box-sizing */
+}
+/* Desktop Styles */
+@media (min-width: 768px) {
+#map,
+#sidebar {
+position: absolute;
+top: 95px;
+/* Increased from 15px to 95px to accommodate the top bar's height */
+bottom: 15px;
+border-radius: 30px;
+overflow-y: auto;
+/* Enables vertical scrolling */
+}
+/* CSS for sidebar visibility toggle */
+#map.sidebar-visible {
+/* Adjust the following styles according to your layout */
+width: calc(100% - 300px);
+/* Assuming the sidebar width is 300px */
+/* Andere styles if necessary */
+}
+#map {
+left: 15px;
+right: calc(30% + 15px);
+}
+.markers-sidebar {
+position: absolute;
+top: 95px;
+/* Increased from 15px to 95px to accommodate the top bar's height */
+left: 15px;
+bottom: 15px;
+/* Adjusted bottom position */
+width: 20%;
+background: white;
+border-radius: 30px !important;
+overflow-y: auto;
+z-index: 10030 !important;
+padding: 20px;
+border-right: 1px solid #ccc;
+display: none;
+/* Initially hidden */
+}
+#sidebar {
+position: absolute;
+width: calc(30% - 15px);
+right: 15px;
+top: 95px;
+/* Increased from 15px to 95px to accommodate the top bar's height */
+bottom: 15px;
+padding: 10px;
+border-radius: 30px;
+background: var(--sidebar-bg);
+/* Use variable for background */
+}
+}
+@media (max-width: 768px) {
+.desktop-only {
+display: none;
+}
+.sidebar-visible #map {
+right: 15px;
+/* Full width map on smaller screens */
+}
+}
+#map {
+left: 15px;
+/* Consistent margin from the left */
+right: calc(30% + 15px);
+/* Adjusting for sidebar width and margin */
+}
+#sidebar {
+width: calc(30% - 15px);
+/* Sidebar takes up 30% width minus right margin */
+right: 15px;
+/* Consistent margin from the right */
+padding: 10px;
+}
+/* Custom Scrollbar Styles */
+/* For Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+width: 0px;
+/* Hide scrollbar globally */
+}
+.faded {
+opacity: 0.5;
+/* Adjust the value as needed for the desired faded effect */
+transition: opacity 0.3s ease;
+/* Smooth transition for the opacity change */
+}
+::-webkit-scrollbar-thumb {
+background-color: transparent;
+/* Invisible scrollbar thumb globally */
+}
+.user-info {
+color: white;
+/* Set the text color to match Andere links */
+margin-right: 20px;
+/* Right margin for spacing */
+font-size: 18px;
+/* Font size similar to Andere links */
+font-weight: bold;
+/* Bold text */
+align-self: center;
+/* Align vertically within the flex container */
+}
+/* Hide scrollbar for IE, Edge, and Firefox */
+body {
+word-wrap: break-word; /* Break long words to prevent horizontal overflow */
+-ms-overflow-style: none;
+/* IE and Edge */
+scrollbar-width: none;
+/* Firefox */
+}
+/* Custom scrollbar for object list */
+#object-list::-webkit-scrollbar {
+width: 6px;
+/* Adjust the width for object list */
+}
+#object-list::-webkit-scrollbar-thumb {
+background-color: #888;
+/* Customize the scrollbar thumb color for object list */
+border-radius: 3px;
+/* Add rounded corners for object list scrollbar */
+}
+#object-list {
+overflow-y: auto;
+/* Enable scrolling for object list */
+max-height: 350px;
+/* Adjust height as needed */
+scrollbar-width: thin;
+/* Use a thin scrollbar for the object list in Firefox */
+-ms-overflow-style: scrollbar;
+/* Enable scrollbar for IE and Edge */
+}
+/* Exception for the scrollbar inside the object list */
+#object-list.custom-scrollbar {
+border-radius: 30px;
+/* Add rounded corners to the object list */
+}
+/* Custom Scrollbar CSS End */
+/* Media Query for Mobile Devices */
+@media only screen and (max-width: 1080px) {
+.button-container .register-button-m,
+button[onclick*="markers-list-overlay"].register-button,
+#add-marker-button.register-button {
+font-size: 14px;
+/* Adjust the font size for mobile devices */
+padding: 10px 15px;
+/* Adjust padding to fit the smaller text */
+}
+#category-toggle-buttons button {
+font-size: 14px !important;
+/* Smaller font size for mobile devices */
+padding: 10px 15px;
+/* Adjusted padding for smaller buttons */
+}
+#custom-confirm button.register-button {
+font-size: 14px;
+/* Decrease the font size for the buttons */
+padding: 8px 10px;
+/* Decrease padding to fit the smaller buttons */
+}
+h3 {
+font-size: 14px;
+/* Slightly smaller font size for the h3 element */
+text-align: center;
+margin-top: 5px;
+display: block;
+}
+.category-label {
+font-size: 18px;
+/* Adjust the font size as needed */
+}
+.project-filter-label {
+font-size: 18px;
+/* Adjust the font size as needed */
+}
+}
+#close-overlay-button {
+width: 100%;
+/* Stretch to fill the container */
+box-sizing: border-box;
+/* Include padding and border in the width */
+display: block;
+/* Display as a block element */
+}
+/* Media Query for Devices Between 1080px and 1400px */
+@media only screen and (min-width: 1081px) and (max-width: 1500px) {
+.button-container .register-button-m,
+button[onclick*="markers-list-overlay"].register-button,
+#add-marker-button.register-button {
+font-size: 16px;
+/* Slightly larger font size for tablet devices */
+padding: 12px 18px;
+/* Adjust padding to fit the larger text */
+}
+#category-toggle-buttons button {
+font-size: 16px !important;
+/* Larger font size for tablet devices */
+padding: 12px 18px;
+/* Adjusted padding for larger buttons */
+}
+#custom-confirm button.register-button {
+font-size: 16px;
+/* Slightly larger font size for the buttons */
+padding: 10px 12px;
+/* Adjust padding to fit the slightly larger buttons */
+}
+h3 {
+font-size: 18px;
+/* Slightly smaller font size for the h3 element */
+text-align: center;
+margin-top: 5px;
+display: block;
+}
+}
+/* CITY PICTURE CSS START */
+.logo-img {
+max-width: 100%;
+width: 100%;
+box-sizing: border-box;
+height: auto;
+display: block;
+margin-left: auto;
+margin-right: auto;
+margin-top: 3px;
+margin-bottom: 8px;
+border-radius: 30px;
+}
+/* CITY PICTURE CSS END */
+/* LEAFLET MAP PILL CSS */
+.leaflet-bar,
+.leaflet-draw-section,
+.leaflet-draw-section {
+border-radius: 30px !important;
+border: none;
+background-color: var(--leaflet-control-bg-dark) !important;
+/* Use variable */
+}
+/* LEAFLET MAP ICONS CSS */
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-draw-draw-polyline,
+.leaflet-draw-draw-polygon,
+.leaflet-draw-draw-rectangle,
+.leaflet-draw-draw-circle,
+.leaflet-draw-draw-marker,
+.leaflet-draw-draw-circlemarker,
+.leaflet-draw-edit-edit,
+.leaflet-draw-edit-remove {
+background-color: #f5f1e4 !important;
+/* Use variable */
+color: #000000 !important;
+/* Use variable */
+border: none !important;
+font-size: 18px !important;
+line-height: 30px !important;
+width: 30px !important;
+height: 30px !important;
+}
+.leaflet-draw-draw-rectangle {
+background-image: url('rectangle_darkmode_svg.svg');
+/* Replace with the path to your new icon */
+background-size: contain;
+background-repeat: no-repeat;
+background-position: center;
+}
+/* LEAFLET MAP ICONS CSS END */
+.leaflet-draw-draw-marker {
+display: none !important;
+}
+.leaflet-draw-draw-polyline {
+display: none !important;
+}
+.leaflet-draw-draw-circlemarker {
+display: none !important;
+}
+/* LEAFLET MAP ICON COLOR CHANGE WHEN DISABLED CSS START */
+.leaflet-disabled {
+background-color: #3a3a3a !important;
+color: #ffffff !important;
+}
+/* LEAFLET MAP ICON COLOR CHANGE WHEN DISABLED CSS END */
+/* LEAFLET MAP ICON BORDER REMOVAL CSS START */
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+border-top: none !important;
+border-bottom: none !important;
+border-radius: 0 !important;
+}
+/* LEAFLET MAP ICON BORDER REMOVAL CSS END */
+/* LEAFLET MAP ICON MISC CSS START */
+.leaflet-bar>a:first-child {
+border-top-left-radius: 30px !important;
+border-top-right-radius: 30px !important;
+}
+.leaflet-bar>a:last-child {
+border-bottom-left-radius: 30px !important;
+border-bottom-right-radius: 30px !important;
+}
+.leaflet-control-layers {
+border-radius: 30px;
+opacity: 1;
+}
+.leaflet-control-layers::before {
+content: "";
+background-image: var(--leaflet-control-layers-before-bg);
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+border-radius: 30px;
+background-size: cover;
+opacity: 1;
+}
+/* Hide the background image when the control layers menu is expanded */
+.leaflet-control-layers-expanded::before {
+content: none !important;
+}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+margin-top: 0px !important;
+/* Reduces the top margin of each label */
+margin-bottom: 0px !important;
+/* Adjusts the space between each item */
+font-size: 7px !important;
+font-weight: bold;
+padding: 10px;
+/* Added padding here */
+}
+.leaflet-control-layers-separator {
+margin-top: 5px;
+/* Adjusts the space above the separator line */
+margin-bottom: 5px;
+/* Adjusts the space below the separator line */
+}
+.leaflet-popup .leaflet-popup-content-wrapper .leaflet-popup-content {
+font-size: 18px !important;
+}
+/* Your existing rules for .leaflet-control-layers and .leaflet-top leaflet-right had typos, corrected below */
+.leaflet-control-layers.leaflet-control {
+background-color: #f5f1e4 !important;
+border-radius: 30px;
+}
+.leaflet-top.leaflet-right {
+border-radius: 50px;
+}
+.leaflet-popup .shape-image {
+max-width: 512px;
+max-height: 512px;
+display: block;
+margin: 0 auto;
+}
+.leaflet-popup-content-wrapper {
+background-color: #f5f1e4 !important;
+color: #000000 !important;
+border-radius: 30px !important;
+width: auto !important;
+}
+.leaflet-popup-content {
+word-wrap: break-word; /* Break long words to prevent horizontal overflow */
+color: #000000 !important;
+}
+.leaflet-popup-tip {
+display: block;
+/* Optional: hides the tip arrow for a cleaner look */
+background-color: #f5f1e4 !important;
+}
+.leaflet-popup-close-button {
+display: none;
+/* Optional: hides the tip arrow for a cleaner look */
+}
+.leaflet-popup.image-popup .leaflet-popup-tip {
+display: none;
+}
+@media (max-width: 1080px) {
+.leaflet-popup-content {
+word-wrap: break-word; /* Break long words to prevent horizontal overflow */
+width: 200px;
+/* Adjust the width as needed for smaller screens */
+}
+.leaflet-popup-content img {
+width: 100%;
+/* Adjust the image width to fit the popup */
+height: auto;
+/* Maintain aspect ratio */
+max-width: 200px;
+/* Maximum width of the image */
+}
+.leaflet-popup .leaflet-popup-tip-container {
+width: 200px;
+/* Align the tip container with the popup width */
+margin-left: -100px;
+/* Half of the width to center it */
+left: 50%;
+/* Center the tip container */
+}
+}
+#shape-note {
+border-radius: 30px;
+border: none;
+display: block;
+color: #111111;
+width: 100%;
+box-sizing: border-box;
+max-height: 200px;
+height: 75px;
+padding: 5px;
+max-width: 100%;
+margin-bottom: -25px;
+/* Adjust this value as needed to reduce gap */
+font-size: 15px;
+/* Set font size to 15px */
+font-family: MaisonNeue, Segoe UI, Helvetica Neue, -apple-system, system-ui, BlinkMacSystemFont, Roboto, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+/* Set font family to Roboto */
+}
+#shape-note::-webkit-input-placeholder {
+/* Chrome, Opera, Safari */
+color: #111111;
+opacity: 1;
+/* Override any default opacity */
+}
+#shape-note:-ms-input-placeholder {
+/* Internet Explorer 10-11 */
+color: #111111;
+opacity: 1;
+/* Override any default opacity */
+}
+#shape-note::-ms-input-placeholder {
+/* Microsoft Edge */
+color: #111111;
+opacity: 1;
+/* Override any default opacity */
+}
+#shape-note::placeholder {
+/* Most modern browsers */
+color: #111111;
+opacity: 1;
+/* Override any default opacity */
+}
+#save-note,
+#cancel-note {
+background-color: #4CAF50;
+/* Green for save, red for cancel */
+border: none;
+color: white;
+padding: 10px 20px;
+border-radius: 30px;
+cursor: pointer;
+font-weight: bold;
+transition: background-color 0.2s ease-in-out;
+margin-top: 0;
+/* Remove top margin to reduce gap */
+}
+#cancel-note {
+background-color: #9A031E;
+margin-left: 50px;
+/* Adjust this value as needed */
+}
+#save-note:hover {
+background-color: #388E3C;
+/* Darker green for hover effect */
+}
+#cancel-note:hover {
+background-color: #D32F2F;
+/* Darker red for hover effect */
+}
+/* LEAFLET MAP ICON MISC CSS END */
+/* SMALL OPTIONS MENU TOP BUTTON CSS START */
+/* This CSS makes sure the "smalloptionsmenutop" entity is resized properly */
+.smalloptionsmenutop {
+display: flex;
+justify-content: space-between;
+}
+.left-container,
+.right-container {
+display: flex;
+align-items: center;
+}
+.pinlist-div,
+.info-div,
+.lightswitch-div,
+.key-div {
+margin: 0 3px;
+}
+
+/* Individual icon divs */
+.lightswitch-div,
+.key-div,
+.pinlist-div,
+.info-div {
+flex-direction: row;
+}
+/* Make the containers hidden when screen width is less than 1271px */
+@media (max-width: 1271px) and (min-width: 768px) {
+.left-container,
+.right-container,
+.togglebuttoncontainer {
+display: in-line;
+}
+}
+@media (min-width: 768px) and (max-width: 1271px) {
+#keyDiv img,
+#infoDiv img,
+#pinlistdiv img,
+#lightswitchDiv img {
+max-width: 30px !important;
+/* Set the max-width to 30px for tablet screens */
+height: auto;
+/* Maintain the aspect ratio of the images */
+border-radius: 30px;
+/* Maintain the border radius */
+}
+}
+@media (min-width: 768px) and (max-width: 1271px) {
+.button-s {
+max-height: 30px !important;
+/* Set the max height to 30px for tablet screens */
+padding: 10px;
+/* Adjust padding as needed */
+}
+.button-s h3 {
+font-size: 16px;
+/* Adjust the font size as needed for tablet screens */
+margin: 0;
+/* You might want to reset any default margin */
+}
+}
+/* Icon scaler */
+#keyDiv {
+cursor: pointer;
+margin: 0;
+padding: 0;
+display: flex;
+align-items: center;
+/* Vertically center the image */
+}
+#keyDiv img {
+max-width: 40px;
+/* Adjust size as needed */
+height: auto;
+border-radius: 30px;
+margin: 0;
+}
+#infoDiv {
+cursor: pointer;
+margin: 0;
+padding: 0;
+display: flex;
+align-items: center;
+/* Vertically center the image */
+}
+#infoDiv img {
+max-width: 40px;
+/* Adjust size as needed */
+height: auto;
+border-radius: 30px;
+margin: 0;
+}
+#pinlistdiv {
+cursor: pointer;
+margin: 0;
+padding: 0;
+display: flex;
+align-items: center;
+/* Vertically center the image */
+}
+#pinlistdiv img {
+max-width: 40px;
+/* Adjust size as needed */
+height: auto;
+border-radius: 30px;
+margin: 0;
+}
+#lightswitchDiv {
+cursor: pointer;
+margin: 0;
+padding: 0;
+display: flex;
+align-items: center;
+/* Vertically center the image */
+}
+#lightswitchDiv img {
+max-width: 40px;
+/* Adjust size as needed */
+height: auto;
+border-radius: 30px;
+margin: 0;
+}
+/* SMALL OPTIONS MENU BUTTON CSS END */
+/* BUTTON MAIN UNIVERSAL CSS START */
+.button-u {
+font-weight: bold;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 14px 0;
+padding: 15px;
+box-sizing: border-box;
+cursor: pointer;
+text-decoration: none;
+white-space: normal;
+border-radius: 30px;
+transition: background-color 0.2s ease-in-out;
+color: white;
+text-align: center;
+line-height: 1;
+max-height: 40px;
+width: 100%;
+}
+/* BUTTON MAIN UNIVERSAL CSS END */
+/* BUTTON SMALL SIDEBAR CSS START */
+/* This button is used mainly for Wie funktionierts. */
+.button-s {
+font-weight: bold;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 14px 0;
+padding: 15px;
+box-sizing: border-box;
+cursor: pointer;
+text-decoration: none;
+white-space: normal;
+border-radius: 30px;
+background-color: #111111;
+/* Use a general variable */
+transition: background-color 0.2s ease-in-out;
+color: white;
+text-align: center;
+line-height: 1;
+max-height: 40px;
+width: 100%;
+}
+/* INFO-POPUP CONTAINER CSS START */
+/* Takes care of how big the info-popup is gonna be. This popup shows information about each element on the website. */
+#info-popup {
+padding: 20px;
+max-width: 500px;
+font-size: 14px;
+z-index: 1000;
+/* Make sure the popup appears above the map */
+background-color: var(--popup-bg-color);
+color: var(--popup-text-color);
+}
+#info-popup.admin-pindelete-popup {
+max-width: 300px;
+}
+#info-popup.uigif-counter-popup {
+max-width: 320px;
+}
+#info-popup.uigif-counter-popup img {
+border-radius: 30px;
+}
+#info-popup.admin-pinresize-popup {
+max-width: 300px;
+}
+/* INFO-POPUP CONTAINER CSS END */
+.count-pill {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+display: flex;
+align-items: center;
+padding: 10px;
+border-radius: 30px;
+background-color: white;
+box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+z-index: 10;
+}
+.color-circle {
+height: 15px;
+width: 15px;
+border-radius: 50%;
+display: inline-block;
+margin-right: 10px;
+/* Adjust as needed */
+}
+.category-symbol {
+height: 25px;
+width: 25px;
+margin-right: 10px;
+/* Adjust as needed */
+}
+#counter-pill {
+position: absolute;
+top: 4.5%;
+left: 50%;
+outline: 2px solid rgba(0, 0, 0, 0.2);
+transform: translate(-50%, -50%);
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 30px;
+padding: 8px 12px;
+/* Increased left and right padding */
+z-index: 1000;
+font-size: 25px;
+font-weight: bold;
+gap: 5px;
+background-color: var(--counter-pill-bg-color);
+color: var(--counter-pill-text-color);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+max-width: 80%;
+/* Increased maximum width */
+}
+.counter-color,
+.marker-btn {
+height: 25px;
+/* Adjusted to match desktop version */
+width: 25px;
+/* Adjusted to match desktop version */
+border-radius: 50%;
+display: inline-block;
+margin-right: 2.5px;
+/* Consistent space after the circle */
+margin-left: 2.5px;
+/* Consistent space after the circle */
+}
+#color-counters,
+#category-counters {
+display: flex;
+padding: 0;
+margin: 0;
+gap: 5px;
+}
+.iframe-container {
+position: relative;
+width: 100%;
+padding-bottom: 56.25%;
+/* Aspect ratio: 16/9 */
+height: 0;
+}
+.iframe-container iframe {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+}
+#color-counters li,
+#category-counters li {
+flex-grow: 1;
+/* Allow each item to grow to fill available space */
+flex-shrink: 1;
+/* Allow each item to shrink if needed */
+display: flex;
+/* Make the list items flex containers */
+justify-content: center;
+/* Center the content horizontally */
+align-items: center;
+/* Center the content vertically */
+max-height: 100%;
+/* Ensure items do not exceed the pill's height */
+}
+/* Adjust the size of the content (icons, text, etc.) inside the list items */
+#color-counters li>*,
+#category-counters li>* {
+max-height: 100%;
+/* Adjusted to allow full height */
+max-width: 100%;
+/* Adjusted to allow full width */
+font-size: 25px;
+/* Consistent font size with the pill */
+}
+.hidden {
+display: none !important;
+}
+#popup-overlay {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+border-radius: 30px;
+background-color: rgba(0, 0, 0, 0.5);
+/* Overlay background */
+z-index: 1000;
+/* Ensure it's above Andere content */
+}
+#popup-content {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+max-width: calc(100% - 20px);
+/* Max width, minus the gap */
+max-height: calc(100% - 20px);
+/* Max height, minus the gap */
+width: 400px;
+height: 300px;
+background: #fff;
+padding: 20px;
+border-radius: 30px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+z-index: 1001;
+/* Above the overlay */
+overflow: auto;
+/* Add scroll for small screens */
+}
+#popup-content button {
+position: absolute;
+top: 10px;
+right: 10px;
+}
+#close-popup {
+position: absolute;
+top: 0;
+right: 0;
+padding: 0.5em;
+border: none;
+background-color: transparent;
+font-size: 1em;
+cursor: pointer;
+z-index: 1002;
+}
+@media screen and (max-width: 420px) {
+#popup-content {
+width: auto;
+/* Adjust width for very small screens */
+}
+}
+.dismiss-button {
+border-radius: 30px;
+margin-right: 50px;
+/* Add Andere styling as needed, e.g., padding, border, background-color, etc. */
+}
+#popup-text .ql-align-center {
+text-align: center;
+}
+#popup-text .ql-font-serif {
+font-family: 'Times New Roman', serif;
+}
+#popup-text .ql-align-right {
+text-align: right;
+}
+#popup-text .ql-align-justify {
+text-align: justify;
+}
+#popup-text .ql-align-center {
+text-align: center;
+}
+.custom-marker-icon img {
+display: none !important;
+}
+.logged-in-info {
+text-align: center;
+/* Centers the text inside the div */
+padding: 2px 0;
+/* Adds some padding above and below the text */
+background-color: #f5f1e4;
+/* Optional: background color, if you want to highlight the div */
+/* Andere styling as needed, such as font size, color, etc. */
+}
+#popup-text img {
+max-width: 95%;
+/* Ensures the image does not exceed the width of the popup */
+height: auto;
+/* Maintains the aspect ratio of the image */
+display: block;
+/* Allows margin auto to work for horizontal centering */
+margin: 0 auto;
+border-radius: 30px;
+/* Centers the image horizontally */
+}
+/* Hide all cursors inside the map when marker drawing is active */
+.no-cursor .leaflet-container,
+.no-cursor .leaflet-container * {
+cursor: none !important;
+}
+/* Hide the Leaflet draw tooltip */
+.leaflet-draw-tooltip {
+display: none !important;
+}
+.leaflet-control-layers-toggle {
+background-image: url('static/mapicon.png') !important;
+/* Check if this path is correct */
+background-color: transparent;
+background-repeat: no-repeat;
+background-position: center;
+border-radius: 50px;
+width: 36px;
+height: 36px;
+}
+/* Media Query for Mobile Devices */
+@media only screen and (max-width: 767px) {
+.leaflet-popup .leaflet-popup-content-wrapper .leaflet-popup-content {
+font-size: 18px !important;
+}
+}
+:root {
+/* Define default dark mode colors */
+--counter-pill-bg-color: #111111;
+--counter-pill-text-color: white;
+--background-color: #f5f1e4;
+/* Dark mode background */
+--text-color: black;
+/* Dark mode text */
+--sidebar-bg: #d9d4c7;
+/* Dark mode sidebar background */
+--leaflet-control-bg-dark: #111111;
+/* Dark mode background color */
+--leaflet-control-color-dark: white;
+/* Dark mode symbol color */
+--button-close-color-dark: white;
+/* Color for dark mode */
+--button-close-color-light: black;
+/* Color for light mode */
+--outline-hover-color-dark: white;
+/* Outline color for dark mode */
+--leaflet-control-layers-before-bg: url("static/mapicon2b.png");
+--outline-hover-color-light: black;
+/* Outline color for light mode */
+--popup-bg-color-light: rgba(244, 244, 237, 1);
+--popup-text-color-light: black;
+--popup-bg-color-dark: rgba(17, 17, 17, 1);
+--popup-text-color-dark: black;
+}
+.light-mode {
+/* Define light mode colors */
+--counter-pill-bg-color: #f3f4f8;
+--counter-pill-text-color: black;
+--background-color: #ffffff;
+/* Light mode background */
+--text-color: black;
+/* Light mode text */
+--sidebar-bg: #EDF2F4;
+/* Light mode sidebar background */
+--counter-pill-bg-color: #f3f4f8;
+/* Light mode counter pill background */
+--counter-pill-text-color: black;
+/* Light mode counter pill text */
+--leaflet-control-bg-light: #f3f4f8;
+/* Light mode background color */
+--leaflet-control-color-light: black;
+/* Light mode symbol color */
+}
+.leaflet-draw-draw-polyline,
+.leaflet-draw-draw-polygon,
+.leaflet-draw-draw-rectangle,
+.leaflet-draw-draw-circle,
+.leaflet-draw-draw-marker,
+.leaflet-draw-draw-circlemarker,
+.leaflet-draw-edit-edit,
+.leaflet-draw-section {
+visibility: hidden;
+/* Hide the icons */
+}
+/* Tool selection popup styling */
+.container {
+position: relative;
+/* Ensures that child absolute elements are positioned relative to this */
+display: flex;
+flex-direction: column;
+align-items: center;
+z-index: 1;
+/* Ensures the container is above Andere content */
+}
+/* Styles for tool buttons inside the popup */
+.tool-btn {
+background-color: transparent;
+border: none;
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+}
+.tool-btn img {
+display: block;
+width: auto;
+height: 30px;
+border-radius: 30px;
+transition: transform 0.2s, outline 0.2s;
+/* Added transition for outline */
+}
+.tool-btn:hover img {
+transform: scale(1.005);
+outline: var(--tool-btn-hover-outline);
+}
+.tool-btn.selected img {
+background-color: rgba(255, 255, 255, 0.3);
+outline: var(--tool-btn-selected-outline);
+}
+.filter-container {
+display: flex;
+justify-content: center;
+/* Center items horizontally */
+flex-wrap: wrap;
+/* Allow items to wrap onto the next line */
+gap: 10px;
+/* Optional: add some space between elements */
+}
+/* If elements wrap, they should take the full width of the line */
+.filter-container>* {
+flex-basis: 100%;
+}
+.type-filter {
+margin-bottom: 50px;
+}
+#mobileCategoryOverlay {
+display: none;
+position: fixed;
+/* Changed from absolute to fixed */
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background-color: rgba(0, 0, 0, 0.8);
+z-index: 100;
+/* Max value */
+overflow: auto;
+justify-content: center;
+align-items: center;
+}
+/* Responsive design */
+@media screen and (min-width: 768px) {
+#mobileCategoryOverlay {
+display: none;
+/* Hide on non-mobile devices */
+}
+}
+.categorybutton {
+opacity: 0;
+font-weight: bold;
+line-height: 1;
+cursor: pointer;
+text-decoration: none;
+display: flex;
+max-width: 90%;
+height: auto;
+box-sizing: border-box;
+border-radius: 30px;
+text-align: center;
+border: none;
+flex-grow: 1;
+flex-shrink: 1;
+padding: 20px 20px !important;
+margin-left: auto !important;
+margin-right: auto !important;
+}
+.categorybutton h3 {
+margin: 0;
+/* Removes any default margin */
+color: white;
+}
+#search-filter-section {
+display: none;
+#admin-map {
+display: none !Important;
+}
+}
+
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+body,
+html {
+padding-left: 15px;
+padding-right: 15px;
+}
+#tool-selection-popup {
+max-width: 70%;
+margin-top: -2.5px !important;
+margin-bottom: 7.5px;
+}
+#map {
+position: absolute;
+top: calc(9vh + 9px);
+/* Estimate based on viewport height and gap */
+bottom: 165px;
+/* Adjust for the fixed height of the sidebar (150px + 15px gap) */
+left: 15px;
+right: 15px;
+border-radius: 30px;
+margin-bottom: 15px;
+margin-top: 7.5px !important;
+z-index: 500 !important;
+}
+#sidebar {
+position: fixed;
+height: 150px;
+bottom: 0;
+left: 15px !important;
+right: 15px !important;
+border-radius: 30px;
+margin-bottom: 15px;
+overflow: hidden;
+width: auto;
+overflow-y: auto;
+/* Enables vertical scrolling */
+background: var(--sidebar-bg);
+/* Use variable for background */
+}
+#sidebar-mobileheader {
+position: fixed;
+top: 15px;
+left: 15px;
+right: 15px;
+margin-bottom: 15px !important;
+border-radius: 30px;
+padding-right: 15px;
+padding-left: 15px;
+padding: 7.5px;
+max-height: 81px;
+z-index: 500 !important;
+/* High z-index */
+background: var(--sidebar-bg);
+/* Use variable for background */
+width: auto;
+/* Fixed width for testing */
+display: block !important;
+/* Force display */
+}
+#sidebar-mobileheader img {
+display: block;
+/* Use block display for the image */
+max-width: 100%;
+/* Limit image width to container width */
+max-height: 64px;
+/* Maximum height for the image */
+height: auto;
+/* Adjust height automatically */
+width: auto;
+/* Adjust width automatically */
+margin: auto;
+/* Center the image if needed */
+object-fit: contain;
+/* Ensure aspect ratio is maintained without stretching */
+}
+.hide-on-mobile {
+display: none !important;
+}
+.appear-on-mobile {
+display: block !important;
+}
+}
+.title-button-container {
+display: flex;
+justify-content: center;
+/* Centering content horizontally */
+align-items: center;
+/* Centering content vertically */
+width: 100%;
+/* Ensure the container takes full width */
+}
+.title-imagebutton {
+margin-right: 10px;
+/* Adds a 10px margin to the right of the title */
+}
+.info-image {
+width: 30px;
+height: 30px;
+border-radius: 50px;
+object-fit: cover;
+z-index: 1002;
+}
+.info-image2 {
+width: 40px;
+height: 40px;
+border-radius: 50px;
+object-fit: cover;
+z-index: 1002;
+}
+#info-link2 {
+position: absolute;
+/* Absolute positioning within the map */
+top: calc(100% - 50px);
+/* Positioned below the Leaflet control layers */
+left: 10px;
+/* Adjust left position as needed */
+z-index: 1002;
+/* Ensure it's above other map elements */
+}
+.info-image {
+display: block;
+/* Ensures the image is properly displayed */
+}
+.info-image:hover {
+transform: scale(1) !important;
+}
+.info-link:hover {
+transform: scale(1) !important;
+}
+#replay-image {
+cursor: pointer;
+/* Resize to 30% of the original size */
+width: 30%;
+height: auto;
+/* Maintain aspect ratio */
+margin-top: 20px;
+/* Space between the video and replay button */
+}
+#replay-image-2 {
+cursor: pointer;
+/* Resize to 30% of the original size */
+width: 30%;
+height: auto;
+/* Maintain aspect ratio */
+margin-top: 20px;
+/* Space between the video and replay button */
+}
+#replay-container {
+display: none;
+/* Initially hidden */
+align-items: center;
+/* Center the content horizontally */
+justify-content: center;
+/* Center the content vertically */
+flex-direction: row;
+/* Align children horizontally */
+}
+#replay-container-2 {
+display: none;
+/* Initially hidden */
+align-items: center;
+/* Center the content horizontally */
+justify-content: center;
+/* Center the content vertically */
+flex-direction: row;
+/* Align children horizontally */
+}
+.video-overlay {
+position: fixed;
+top: 0;
+left: 50%;
+transform: translateX(-50%);
+width: 100vw;
+height: 100vh;
+background: rgba(0, 0, 0, 0.8);
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+z-index: 100000;
+padding: 10px;
+box-sizing: border-box;
+}
+#video-overlay-2 {
+position: fixed;
+/* or 'absolute' depending on layout */
+top: 50%;
+/* Adjust these values as needed */
+left: 50%;
+transform: translate(-50%, -50%);
+z-index: 100000;
+/* Ensure it appears above the map content */
+/* Other styling as needed */
+}
+/* Styling for the close button */
+.video-overlay button {
+padding: 10px 20px;
+font-size: 18px;
+font-weight: bold;
+cursor: pointer;
+border: none;
+background-color: #003056;
+color: white;
+border-radius: 30px;
+transition: background-color 0.2s ease;
+margin-top: 40px;
+/* Space between the video and replay button */
+}
+/* Hover effect for the close button */
+.video-overlay button:hover {
+transform: scale(1.02);
+}
+/* Base style for both iframes */
+#youtube-iframe,
+#youtube-iframe-2 {
+max-width: 100%;
+max-height: 100vh;
+border-radius: 30px;
+/* Rounded corners with a radius of 30px */
+}
+/* Media queries to adjust width and height based on screen size for both iframes */
+@media only screen and (min-width: 1025px) {
+#youtube-iframe,
+#youtube-iframe-2 {
+width: 70vw;
+height: calc(70vw * 9 / 16);
+/* Maintain a 16:9 aspect ratio */
+}
+}
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+#youtube-iframe,
+#youtube-iframe-2 {
+width: 80vw;
+height: calc(80vw * 9 / 16);
+/* Maintain a 16:9 aspect ratio */
+}
+}
+@media only screen and (max-width: 767px) {
+#youtube-iframe,
+#youtube-iframe-2 {
+width: 90vw;
+height: calc(90vw * 9 / 16);
+/* Maintain a 16:9 aspect ratio */
+}
+}
+#video-overlay-2 iframe {
+border-radius: 30px;
+/* Apply a border-radius of 30px */
+}
+@media (max-width: 768px) {
+#counter-pill {
+padding: 8px 15px;
+/* Increased left and right padding */
+font-size: 3vw;
+top: 5.5%;
+max-width: 60%;
+}
+.counter-color {
+height: 12px;
+width: 12px;
+border-radius: 50%;
+display: inline-block;
+margin-right: 1.5px;
+/* Reduced space after the circle */
+margin-left: 1.5px;
+/* Reduced space after the circle */
+}
+#color-counters,
+#category-counters {
+display: flex;
+padding: 0;
+margin: 0;
+gap: 5px;
+}
+#color-counters li,
+#category-counters li {
+flex-grow: 1;
+/* Allow each item to grow to fill available space */
+flex-shrink: 1;
+/* Allow each item to shrink if needed */
+display: flex;
+/* Make the list items flex containers */
+justify-content: center;
+/* Center the content horizontally */
+align-items: center;
+/* Center the content vertically */
+max-height: 100%;
+/* Ensure items do not exceed the pill's height */
+}
+/* Adjust the size of the content (icons, text, etc.) inside the list items */
+#color-counters li>*,
+#category-counters li>* {
+max-height: 50%;
+/* Ensure content does not exceed the list item's height */
+max-width: 50%;
+/* Ensure content does not exceed the list item's width */
+font-size: 2.5vw;
+/* Responsive font size for the content */
+}
+}
+/* Media query for tablet devices */
+@media (min-width: 768px) and (max-width: 1080px) {
+#map {
+left: 15px;
+/* Consistent margin from the left */
+right: calc(40% + 0px);
+/* Adjusting for sidebar width and right margin */
+top: 95px;
+/* Increased from 15px to 95px to accommodate the top bar's height */
+bottom: 15px;
+/* Consistent margin from the bottom */
+border-radius: 30px;
+/* Maintain border radius */
+}
+.counter-color,
+.marker-btn {
+height: 25px;
+/* Adjusted to match desktop version */
+width: 25px;
+/* Adjusted to match desktop version */
+border-radius: 50%;
+display: inline-block;
+margin-right: 5px;
+/* Consistent space after the circle */
+}
+#sidebar {
+width: calc(40% - 30px);
+/* Sidebar takes up 40% width minus the total horizontal margins */
+right: 15px;
+/* Consistent margin from the right */
+top: 95px;
+/* Increased from 15px to 95px to accommodate the top bar's height */
+bottom: 15px;
+/* Consistent margin from the bottom */
+padding: 10px;
+/* Maintain padding */
+overflow-y: auto;
+/* Enables vertical scrolling */
+border-radius: 30px;
+/* Maintain border radius */
+background: var(--sidebar-bg);
+/* Use variable for background */
+}
+}
+/* Mobile view */
+@media screen and (max-width: 1080px) {
+#search-filter-section {
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background-color: rgba(0, 0, 0, 0.8);
+z-index: 100;
+overflow: auto;
+justify-content: center;
+align-items: center;
+padding: 20px;
+box-sizing: border-box;
+}
+.filter-container {
+background: white;
+padding: 20px;
+border-radius: 30px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+}
+@media only screen and (max-width: 1080px) {
+.key-div {
+display: none !important;
+}
+}
+@media only screen and (max-width: 1080px) {
+.pinlist-div {
+display: none !important;
+}
+}
+img {
+border-radius: 30px;
+}
+.logo {
+max-width: 1000px;
+/* Increase the max-width to make it bigger */
+margin-bottom: 30px;
+}
+img:hover {}
+.form-container {
+margin: 40px auto;
+width: 60%;
+background-color: #fff;
+padding: 40px;
+box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+border-radius: 30px;
+box-sizing: border-box;
+}
+.input-field {
+margin-bottom: 30px;
+}
+label {
+display: block;
+margin-top: 5px;
+margin-bottom: 5px;
+font-size: 18px;
+color: #333;
+}
+input[type="text"],
+select,
+#description-editor,
+#benefit-editor {
+width: 100%;
+padding: 10px;
+border-radius: 5px;
+border: 1px solid #ccc;
+font-size: 16px;
+color: #333;
+box-sizing: border-box;
+}
+input[type="file"] {
+border: none;
+}
+.button {
+border-radius: 30px;
+padding: 15px;
+background-color: white;
+font-weight: bold;
+color: black;
+border: none;
+cursor: pointer;
+transition: background-color 0.3s ease;
+/* Smooth transition for background color */
+}
+.register-button {
+background-color: #003056;
+/* Example color */
+color: white;
+border: none;
+/* Remove the border */
+outline: none;
+/* Remove the outline */
+box-shadow: none;
+/* Remove any shadow that might appear as an outline */
+border-radius: 30px;
+padding: 5px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-weight: bold;
+font-size: 24px;
+margin: auto;
+margin-top: 0px !important;
+margin-bottom: 0px;
+cursor: pointer;
+width: 60%;
+/* Full width */
+box-sizing: border-box;
+/* Include padding in width */
+}
+.register-button-m {
+background-color: #003056;
+/* Example color */
+color: white;
+border: none;
+/* Remove the border */
+outline: none;
+/* Remove the outline */
+box-shadow: none;
+/* Remove any shadow that might appear as an outline */
+border-radius: 30px;
+padding: 5px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-weight: bold;
+font-size: 24px;
+margin: auto;
+margin-top: 0px !important;
+margin-bottom: 0px;
+cursor: pointer;
+width: 97%;
+box-sizing: border-box;
+/* Include padding in width */
+}
+.register-button-f {
+background-color: #003056;
+/* Example color */
+color: white;
+border: none;
+/* Remove the border */
+outline: none;
+/* Remove the outline */
+box-shadow: none;
+/* Remove any shadow that might appear as an outline */
+border-radius: 30px;
+padding: 5px 10px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-weight: bold;
+font-size: 16px;
+margin: auto;
+margin-top: 0px !important;
+margin-bottom: 20px;
+cursor: pointer;
+width: 97%;
+box-sizing: border-box;
+/* Include padding in width */
+}
+.button-container {
+display: flex;
+justify-content: center;
+/* Center horizontally */
+align-items: center;
+/* Center vertically if needed */
+width: 100%;
+/* Take full width of the parent */
+margin-top: 0px;
+/* Add some space on top */
+}
+.publish-button {
+width: 100%;
+/* Full width */
+padding: 20px 0;
+/* Vertical padding */
+font-size: 20px;
+/* Font size */
+background-color: #2874A6;
+/* Background color */
+color: white;
+/* Text color */
+border-radius: 30px;
+/* Border radius */
+border: none;
+/* No border by default */
+cursor: pointer;
+/* Pointer cursor on hover */
+transition: width transform 0.3s ease;
+/* Smooth transition for transform and border */
+}
+.register-button-m:hover {
+transform: scale(1.005);
+/* Scale up on hover */
+filter: brightness(110%);
+/* Increase brightness by 10% */
+}
+.publish-button:hover {
+transform: scale(1.005);
+/* Scale up on hover */
+border: 2px solid black;
+/* Thin black border on hover */
+}
+.project img {
+max-width: 300px;
+/* Adjust the width as needed */
+max-height: 200px;
+/* Adjust the height as needed */
+height: auto;
+/* Maintain aspect ratio */
+width: auto;
+/* Maintain aspect ratio */
+border-radius: 30px;
+/* Optional: if you want rounded corners */
+}
+.top-bar {
+background-color: #003056;
+/* Background color of the top bar */
+height: 80px;
+/* Height of the top bar */
+width: 100%;
+/* Full width of the screen */
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 20px 20px;
+/* Add padding to the left and right */
+box-sizing: border-box;
+/* Include padding in width calculation */
+align-items: center;
+/* This ensures vertical alignment */
+z-index: 10000;
+/* Ensures the top bar is above Andere content */
+position: fixed;
+/* Fixed positioning to keep the bar at the top */
+top: 0;
+/* Align to the top */
+left: 0;
+/* Align to the left */
+}
+.top-bar a .logo {
+max-width: auto;
+/* Adjust this value as needed */
+max-height: 80px;
+/* Ensure the logo fits within the bar's height */
+margin: auto;
+}
+/* Styles for buttons inside links in the top bar */
+.top-bar a button {
+transition: width 0.3s ease;
+/* Transition for the transform property */
+border-radius: 30px;
+/* If you want to keep the border-radius */
+/* Add any Andere button-specific styles here */
+}
+/* Hover effect for buttons inside links in the top bar */
+/* Hover effect for links in the top bar */
+.top-bar a:not(:has(button)):hover::after {
+transform: scaleX(1);
+/* Show the underscore on hover */
+transform-origin: left;
+}
+.top-bar a {
+color: white;
+text-decoration: none;
+margin-right: 20px;
+/* Add spacing between links */
+font-size: 18px;
+/* Increase text size */
+font-weight: bold;
+/* Make text bold */
+position: relative;
+transition: color 0.3s ease, text-shadow 0.3s ease;
+/* Transition for color and text shadow */
+}
+/* Exclude the logo link from having the underline effect */
+.top-bar a[href="/"]:hover::after {
+content: none;
+}
+/* Underline effect for links that do not contain the logo */
+.top-bar a:not(:has(> .logo))::after {
+content: "";
+position: absolute;
+left: 0;
+bottom: -3px;
+width: 100%;
+height: 2px;
+background-color: white;
+transform: scaleX(0);
+transform-origin: right;
+transition: transform 0.3s;
+}
+/* Additional styles for .logo to ensure it fits well in the top bar */
+.top-bar a .logo {
+max-width: auto;
+/* Adjust this value as needed */
+max-height: 80px;
+/* Ensure the logo fits within the bar's height */
+margin: auto;
+}
+.top-bar a:hover {
+color: #a8c0ff;
+/* Change color on hover */
+text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.7);
+/* Add text shadow on hover */
+}
+.top-bar a::after {
+content: "";
+position: absolute;
+left: 0;
+bottom: -3px;
+width: 100%;
+height: 2px;
+background-color: white;
+transform: scaleX(0);
+transform-origin: right;
+transition: transform 0.3s;
+}
+/* Hover effect for buttons inside links in the top bar */
+/* Underline effect for links that do not contain buttons */
+.top-bar a:not(:has(> button))::after {
+content: "";
+position: absolute;
+left: 0;
+bottom: -3px;
+width: 100%;
+height: 2px;
+background-color: white;
+transform: scaleX(0);
+transform-origin: right;
+transition: transform 0.3s;
+}
+/* Hover effect to show underline for links that do not contain buttons */
+.top-bar a:not(:has(> button)):hover::after {
+transform: scaleX(1);
+}
+.index-image {
+position: relative;
+/* Change positioning context to relative */
+width: 100%;
+object-fit: cover;
+max-height: 500px;
+border-radius: 0px;
+}
+.index-image:hover {
+transform: scale(1.00);
+/* !important: */
+}
+.cover-text-container {
+position: absolute;
+top: 70%;
+left: 50%;
+transform: translate(-50%, -50%);
+background-color: rgba(0, 0, 0, 0.3);
+/* Black background with 70% opacity */
+padding: 25px;
+border-radius: 80px;
+text-align: center;
+}
+.cover-text-container h1 {
+font-size: 40px;
+color: white;
+margin: 0;
+padding-bottom: 10px;
+text-shadow:
+-2px -2px 0 black,
+2px -2px 0 black,
+-2px 2px 0 black,
+2px 2px 0 black;
+}
+.cover-text-container p {
+font-size: 30px;
+color: white;
+margin: 0;
+text-shadow:
+-2px -2px 0 black,
+2px -2px 0 black,
+-2px 2px 0 black,
+2px 2px 0 black;
+}
+.info-box-container {
+display: flex;
+justify-content: space-evenly;
+padding: 20px;
+}
+.info-box {
+background-color: #1b1b1b;
+border-radius: 30px;
+padding: 20px;
+text-align: center;
+transition: width 0.3s ease;
+width: 30%;
+/* Set a fixed width for each box */
+}
+.info-box:hover {
+transform: scale(1.005);
+}
+.info-box-icon {
+max-width: 70px;
+/* Icon size */
+border-radius: 50%;
+/* Make it circular */
+}
+.info-box-title {
+color: white;
+font-size: 30px;
+margin: 10px 0;
+}
+.info-box-undertitle {
+color: white;
+font-size: 16px;
+}
+/* Specific colors for each box */
+.box-red {
+background-color: #06467c;
+}
+.box-blue {
+background-color: #02569d;
+}
+.box-green {
+background-color: #2874A6;
+}
+.info-text-field {
+background-color: #F4F4F8;
+/* Light grey background */
+width: 100%;
+/* Full width */
+height: 400px;
+/* Specified height */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+text-align: center;
+padding: 20px;
+box-sizing: border-box;
+/* Include padding in width calculation */
+}
+.info-text-container {
+width: 50%;
+/* Width of the text container */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 20px;
+}
+.info-text-title {
+font-size: 30px;
+color: black;
+margin-bottom: 10px;
+}
+.info-text-undertitle {
+font-size: 20px;
+color: black;
+margin-top: 10px;
+}
+input[type="text"],
+select,
+#description-editor,
+#benefit-editor {
+margin-bottom: 0px !important;
+}
+/* Media Query for Desktop Sizes Between 768px and 1445px */
+@media (min-width: 768px) and (max-width: 1445px) {
+.markers-sidebar {
+width: 35%;
+/* Adjusted width to 35% */
+}
+}
+@media only screen and (max-width: 1445px) {
+.top-bar a button {
+transition: width 0.3s ease;
+/* Transition for the transform property */
+border-radius: 30px;
+/* If you want to keep the border-radius */
+padding: 7px;
+/* Add any Andere button-specific styles here */
+}
+}
+#hamburger-button {
+display: none;
+/* Hidden by default */
+}
+@media only screen and (max-width: 1080px) {
+body {
+font-size: 14px;
+/* Smaller font size */
+}
+#hamburger-button {
+display: none;
+/* Hidden by default */
+font-size: 30px;
+/* Icon size */
+color: white;
+/* Icon color */
+background: none;
+/* No background */
+border: none;
+/* No border */
+cursor: pointer;
+/* Pointer cursor */
+}
+.top-bar {
+flex-direction: column;
+/* Stack items vertically */
+height: auto;
+/* Adjust height automatically */
+}
+.form-container {
+width: 90%;
+/* Full width with some margin */
+padding: 20px;
+/* Smaller padding */
+}
+.publish-button {
+font-size: 18px;
+/* Slightly smaller font size */
+padding: 15px 0;
+/* Adjust padding */
+}
+/* Hamburger Menu Button */
+/* Navigation Overlay */
+.nav-overlay {
+display: none;
+/* Hidden by default */
+position: fixed;
+/* Fixed position */
+width: 100%;
+/* Full width */
+height: 100%;
+/* Full height */
+top: 0;
+left: 0;
+background-color: rgba(0, 0, 0, 0.9);
+/* Semi-transparent black */
+overflow-x: hidden;
+/* Hide horizontal overflow */
+transition: 0.5s;
+/* Smooth transition for opening/closing */
+z-index: 10001 !important;
+/* High z-index to ensure it's on top */
+}
+.nav-overlay-active .main-content {
+pointer-events: none;
+}
+}
+/* Mobile Devices */
+@media only screen and (max-width: 1080px) {
+label {
+display: block;
+font-size: 16px;
+color: #333;
+}
+.register-button-m {
+width: calc(100% - 10px);
+/* Full width minus the left and right margins */
+margin-left: 5px;
+/* 5px gap on the left */
+margin-right: 5px;
+/* 5px gap on the right */
+display: block;
+/* Change display to block for full width */
+font-size: 16px !important;
+}
+.button-container {
+padding: 0;
+/* Remove padding if any */
+}
+.top-bar a .logo {
+margin-left: auto;
+/* Adjust logo position */
+margin-right: auto;
+}
+#nav-links {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+height: 100%;
+}
+#nav-links a {
+padding: 20px;
+/* Larger clickable area */
+font-size: 24px;
+/* Larger font size */
+}
+}
+/* Mobile Devices */
+@media only screen and (max-width: 1080px) {
+.top-bar {
+flex-direction: row;
+/* Align items horizontally */
+justify-content: space-between;
+/* Space between items */
+align-items: center;
+/* Vertically center items */
+padding: 10px 15px;
+/* Consistent padding */
+}
+.top-bar a {
+display: flex;
+/* Flex container for the logo */
+align-items: center;
+/* Vertically center logo */
+margin: 0;
+/* Remove any default margin */
+}
+.top-bar a .logo {
+max-width: 270px;
+/* Adjust logo size */
+max-height: 350px;
+/* Adjust height automatically */
+}
+#hamburger-button {
+display: block;
+/* Show the button on mobile */
+margin: 0;
+/* Remove any margin */
+align-self: center;
+/* Explicitly center the button vertically */
+}
+#nav-links {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+height: 100%;
+#nav-links a {
+padding: 20px;
+/* Padding for each link */
+font-size: 24px;
+/* Font size for links */
+}
+}
+@media only screen and (max-width: 768px) {
+.info-box-container {
+flex-direction: column;
+align-items: center;
+}
+.info-box {
+width: 80%;
+/* Adjust width to fit mobile screens */
+margin-bottom: 20px;
+/* Add some space between the boxes */
+}
+}
+@media only screen and (max-width: 1080px) {
+.cover-text-container h1 {
+font-size: 4vw;
+/* Adjust font size for smaller screens */
+}
+.cover-text-container p {
+font-size: 3.5vw;
+/* Larger size for smaller screens */
+}
+.cover-text-container {
+background-color: rgba(0, 0, 0, 0.0) !important;
+/* Black background with 70% opacity */
+top: 60%;
+width: 90%;
+/* Set the width to 90% of the parent container */
+}
+}
+.cover-text-container {
+background-color: rgba(0, 0, 0, 0.4);
+/* Black background with 70% opacity */
+top: 50%;
+width: 90%;
+/* Set the width to 90% of the parent container */
+}
+}
+.info-text-title,
+.info-text-undertitle {
+font-size: 2.5vw;
+/* Adjust as needed */
+}
+@media only screen and (max-width: 1080px) {
+.info-text-title {
+font-size: 4vw;
+/* Larger size for smaller screens */
+}
+.info-text-undertitle {
+font-size: 3vw;
+/* Larger size for smaller screens */
+}
+}
+@media only screen and (max-width: 1080px) {
+.info-text-field {
+height: auto;
+/* Allow the height to adjust based on content */
+}
+.info-text-container {
+width: 80%;
+/* Reduce the width for tablets */
+}
+}
+@media only screen and (max-width: 768px) {
+.info-text-field {
+height: auto;
+/* Allow the height to adjust based on content */
+}
+.info-text-container {
+width: 90%;
+/* Reduce the width further for mobile */
+}
+}
+/* Scale logo image on hover */
+img.logo:hover {
+transform: scale(1.005);
+transition: width 0.3s ease;
+}
+/* Hover effect for category buttons (dynamically generated) */
+#category-toggle-buttons button:hover {
+transform: scale(1.005);
+}
+/* Scale register buttons on hover */
+.register-button:hover {
+transform: scale(1.005);
+transition: width 0.3s ease;
+}
+.register-button-f:hover {
+transform: scale(1.005);
+transition: width 0.3s ease;
+}
+    </style>
+	
+<body>
+<div>
+
+<div class="top-bar">
+    <a href="/">
+    <img src="{{ url_for('serve_image', filename='logo.png') }}" alt="Logo" class="logo">
+    </a>  
+    <button id="hamburger-button">&#9776;</button>
+    <div id="nav-overlay" class="nav-overlay">
+        <div id="nav-links">
+            <a href="/karte">Karte</a>
+            <a href="/list">Projektvorschläge</a>
+            <a href="/neuerbeitrag">Vorschlag hinzufügen</a>
+            <a href="/ueber">Über</a>
+            <a href="/profil">Profil</a>
+            {% if current_user.is_authenticated %}
+            <span class="user-info" style="margin-top: 10px;">
+            Benutzer: {{ current_user.name }}
+            </span>
+            <a href="{{ url_for('logout', next=request.path) }}"><button class="button">Abmelden</button></a>
+            {% else %}
+            <a href="{{ url_for('login', next=request.path) }}"><button class="button">Anmelden</button></a>
+            {% endif %}
+        </div>
+    </div>
+	</div>
+<<div class="sidebar" id="sidebar">
+    <form id="baustelleForm" method="post" enctype="multipart/form-data" class="form-container">
+        <input type="text" id="name" name="name" placeholder="Insert title" required class="form-input">
+        <textarea id="description" name="description" placeholder="Insert description" class="form-input"></textarea>
+        <input type="file" id="gis_data" name="gis_data[]" accept=".geojson" multiple required class="form-input" onchange="loadGeoJSON(event)">
+        <button type="button" onclick="submitForm()" class="form-input">Publish</button>
+    </form>
+<!-- Place this section where it fits within your layout -->
+<div id="geojsonFilesList" style="margin-top: 20px;">
+    <h3>Loaded GeoJSON Files:</h3>
+    <ul id="loadedFiles"></ul>
+</div>
+    </div>
+
+<div id="map"></div>
+</div>
+
+    <script>
+var map = L.map('map').setView([48.4102, 15.6022], 13);
+var currentDrawnLayer = null;
+var selectedToolButton = null;
+// Track the current base layer
+var currentBaseLayer = 'Standardkarte'; // Default layer
+// Calculate the offset for boundaries
+var horizontalOffset = 1125; // 1.0225 km on each side, total 2.25 km
+var verticalOffset = 594; // 0.59375 km on each side, total 1.02875 km
+// Define the boundaries
+var centerPoint = map.project([48.4102, 15.6022], map.getZoom());
+var southWest = map.unproject(centerPoint.subtract([horizontalOffset, verticalOffset]), map.getZoom());
+var northEast = map.unproject(centerPoint.add([horizontalOffset, verticalOffset]), map.getZoom());
+var bounds = L.latLngBounds(southWest, northEast);
+// Calculate extended bounds for 10 km buffer
+var extendedHorizontalOffset = horizontalOffset + 100000; // Add 10 km
+var extendedVerticalOffset = verticalOffset + 100000; // Add 10 km
+var extendedSouthWest = map.unproject(centerPoint.subtract([extendedHorizontalOffset, extendedVerticalOffset]), map.getZoom());
+var extendedNorthEast = map.unproject(centerPoint.add([extendedHorizontalOffset, extendedVerticalOffset]), map.getZoom());
+var extendedBounds = L.latLngBounds(extendedSouthWest, extendedNorthEast);
+// Set the max bounds to restrict dragging beyond 10 km from the original boundary
+map.setMaxBounds(extendedBounds);
+// Debugging: Log when the user reaches the edge of the draggable area
+map.on('drag', function() {
+    if (!extendedBounds.contains(map.getCenter())) {}
+});
+// Define the coordinates for a very large outer rectangle
+var outerBounds = [
+    L.latLng(-90, -180),
+    L.latLng(90, -180),
+    L.latLng(90, 180),
+    L.latLng(-90, 180),
+    L.latLng(-90, -180)
+];
+// Define the coordinates for the inner rectangle (the boundary)
+var innerBounds = [
+    bounds.getSouthWest(),
+    bounds.getNorthWest(),
+    bounds.getNorthEast(),
+    bounds.getSouthEast(),
+    bounds.getSouthWest()
+];
+var boundary = L.latLngBounds(innerBounds);
+// Create a polygon with a hole (inverted polygon)
+var invertedPolygon = L.polygon([outerBounds, innerBounds], {
+    color: 'grey',
+    fillColor: 'grey',
+    fillOpacity: 0.5
+}).addTo(map);
+// Draw the boundary rectangle
+L.rectangle(bounds, {
+    color: "#808080",
+    weight: 2,
+    fill: false
+}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    minZoom: 13,
+    attribution: '| © OpenStreetMap contributors'
+}).addTo(map);
+// Map layers
+var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    minZoom: 13,
+    attribution: '....'
+});
+var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    minZoom: 13,
+    attribution: '&copy; Esri &mdash; Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, GIS User Community'
+});
+var thunderforestLayers = {
+    "Atlas": L.tileLayer('https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=5c57f95ca93348f1a37f6572742a5b48', {
+        minZoom: 13,
+        attribution: 'Tiles © Thunderforest, ....'
+    }),
+    "Neighbourhood": L.tileLayer('https://tile.thunderforest.com/neighbourhood/{z}/{x}/{y}.png?apikey=5c57f95ca93348f1a37f6572742a5b48', {
+        minZoom: 13,
+        attribution: 'Tiles © Thunderforest, ....'
+    }),
+    "Transport": L.tileLayer('https://tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=5c57f95ca93348f1a37f6572742a5b48', {
+        minZoom: 13,
+        attribution: 'Tiles © Thunderforest, ....'
+    }),
+    "Cycle": L.tileLayer('https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=5c57f95ca93348f1a37f6572742a5b48', {
+        minZoom: 13,
+        attribution: 'Tiles © Thunderforest, ....'
+    }),
+    "Mobile_Atlas": L.tileLayer('https://tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey=5c57f95ca93348f1a37f6572742a5b48', {
+        minZoom: 13,
+        attribution: 'Tiles © Thunderforest, ....'
+    }),
+    "Pioneer": L.tileLayer('https://tile.thunderforest.com/pioneer/{z}/{x}/{y}.png?apikey=5c57f95ca93348f1a37f6572742a5b48', {
+        minZoom: 13,
+        attribution: 'Tiles © Thunderforest, ....'
+    }),
+};
+// basemap.at layers
+var basemapLayers = {
+    "GeolandBasemap": L.tileLayer('http://maps.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png', {
+        minZoom: 13,
+        attribution: 'Basemap.at, ....'
+    }),
+    "BmapGrau": L.tileLayer('http://maps.wien.gv.at/basemap/bmapgrau/normal/google3857/{z}/{y}/{x}.png', {
+        minZoom: 13,
+        attribution: 'Basemap.at, ....'
+    })
+};
+var baseLayers = {
+    "Standardkarte": osmLayer,
+    "Satellit": satelliteLayer,
+    "Klar": thunderforestLayers.Atlas,
+    "Öffi": thunderforestLayers.Transport,
+    "Radwege": thunderforestLayers.Cycle,
+    "Grau": basemapLayers.BmapGrau,
+    "Kontrast": thunderforestLayers.Mobile_Atlas,
+    "Papyrus": thunderforestLayers.Pioneer,
+};
+// Add default layer to map
+baseLayers["Standardkarte"].addTo(map);
+map.on('baselayerchange', function(e) {
+    currentBaseLayer = e.name;
+    updateMarkerIcons();
+});
+L.control.layers(baseLayers).addTo(map);
+
+// Add a boundary visualization to the map (optional).
+
+// Initialize GeoJSON layer storage.
+var geojsonLayers = {};
+var geojsonFileCounter = 0;
+var geojsonFilesList = document.getElementById('loadedFiles');
+var drawnObjects = {}; // Tracks drawn Leaflet objects
+
+// Function to handle GeoJSON file loading.
+       function loadGeoJSON(event) {
+            var files = event.target.files;
+            for (var i = 0, f; f = files[i]; i++) {
+                var reader = new FileReader();
+                reader.onload = (function(theFile) {
+                    return function(e) {
+                        var data = JSON.parse(e.target.result);
+                        var geojson = L.geoJSON(data, {
+                            pointToLayer: createColoredMarker,
+                            onEachFeature: onEachFeature
+                        }).addTo(map);
+                        map.fitBounds(geojson.getBounds());
+                        var layerId = 'geojsonLayer_' + L.stamp(geojson);
+                        geojsonLayers[layerId] = geojson;
+                        addFileToList(theFile.name, layerId);
+                    };
+                })(f);
+                reader.readAsText(f);
+            }
+        }
+
+// Update the list of loaded GeoJSON files.
+var editableLayers = new L.FeatureGroup();
+        map.addLayer(editableLayers);
+
+// Initialize the draw control and pass it the FeatureGroup of editable layers
+
+        var drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: editableLayers,
+                poly: {
+                    allowIntersection: false
+                }
+            },
+            draw: {
+                polygon: {
+                    allowIntersection: false,
+                    showArea: true
+                },
+                polyline: true,
+                rectangle: true,
+                circle: true,
+                marker: true
+            }
+        });
+        map.addControl(drawControl);
+
+ function createColoredMarker(feature, latlng) {
+            var geojsonMarkerOptions = {
+                radius: 8,
+                fillColor: feature.properties.color || "#ff7800", // Default color if not specified
+                color: "#000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            };
+            return L.circleMarker(latlng, geojsonMarkerOptions);
+        }
+
+// Handle the creation of new layers
+map.on(L.Draw.Event.CREATED, function (e) {
+            var type = e.layerType,
+                layer = e.layer,
+                layerId = L.stamp(layer);
+            drawnObjects[layerId] = layer;
+            layer.addTo(map);
+            addDrawnObjectToList(type, layerId);
+        });
+
+// Updated function for GeoJSON files and drawn objects
+function addToList(name, layerId, isDrawnObject = false) {
+    var list = document.getElementById('loadedFiles');
+    var listItem = document.createElement('li');
+    listItem.innerHTML = `${name} <button onclick="removeLayer('${layerId}', ${isDrawnObject})">&#10060;</button> <button onclick="toggleLayerVisibility('${layerId}', ${isDrawnObject})">&#128065;</button> <input type='color' id='colorPicker_${layerId}' oninput='changeLayerColor("${layerId}", this.value, ${isDrawnObject})'>`;
+    listItem.id = 'listItem_' + layerId;
+    list.appendChild(listItem);
+}
+
+// Use this unified function for adding both GeoJSON and drawn objects to the list
+        function addFileToList(name, layerId) {
+            addToList(name, layerId, false);
+        }
+
+        function addDrawnObjectToList(type, layerId) {
+            addToList(type, layerId, true);
+        }
+
+
+    var geojsonLayer;
+
+var geojsonLayers = {}; // Object to hold each geoJSON layer by a unique identifier
+var fileCounter = 0; // Counter to create unique identifiers
+
+
+
+
+function createPopupContent(properties) {
+    let popupContent = '<div class="popup-content">';
+    for (const [key, value] of Object.entries(properties)) {
+        // Special handling for the image file to create an <img> tag
+        if (key === "image_file" && value) {
+            popupContent += `<br><img src="/static/usersubmissions/${value}" alt="Image" style="max-width:200px; cursor:pointer;" onclick="openImageInOverlay('/static/usersubmissions/${value}')">`;
+        } else {
+            // For other properties, just append them to the popup content
+            popupContent += `<br><b>${key}:</b> ${value}`;
+        }
+    }
+    popupContent += '</div>';
+    return popupContent;
+}
+
+// Revised onEachFeature function
+function onEachFeature(feature, layer) {
+            if (feature.properties) {
+                var popupContent = Object.keys(feature.properties).map(function(k) {
+                    return k + ': ' + feature.properties[k];
+                }).join('<br>');
+                layer.bindPopup(popupContent);
+            }
+        }
+
+ function addToList(name, layerId, isDrawnObject) {
+            var list = document.getElementById('loadedFiles');
+            var listItem = document.createElement('li');
+            listItem.innerHTML = `${name} <button onclick="removeLayer('${layerId}', ${isDrawnObject})">&#10060;</button> <button onclick="toggleLayerVisibility('${layerId}', ${isDrawnObject})">&#128065;</button> <input type='color' id='colorPicker_${layerId}' oninput='changeLayerColor("${layerId}", this.value, ${isDrawnObject})'>`;
+            listItem.id = 'listItem_' + layerId;
+            list.appendChild(listItem);
+        }
+		
+function toggleLayerVisibility(layerId, isDrawnObject) {
+            var layer = isDrawnObject ? drawnObjects[layerId] : geojsonLayers[layerId];
+            if (map.hasLayer(layer)) {
+                map.removeLayer(layer);
+            } else {
+                map.addLayer(layer);
+            }
+        }
+
+
+function addDrawnObjectToList(type, layerId) {
+    var list = document.getElementById('loadedFiles');
+    var listItem = document.createElement('li');
+    listItem.innerHTML = `${type} <button onclick="removeLayer('${layerId}', true)">Remove</button> 
+    <button onclick="toggleLayerVisibility('${layerId}', true)">&#128065;</button> 
+    <input type='color' id='colorPicker_${layerId}' oninput='changeLayerColor("${layerId}", this.value, true)'>`;
+    listItem.id = 'listItem_' + layerId;
+    list.appendChild(listItem);
+}
+
+function changeLayerColor(layerId, color, isDrawnObject) {
+    var layer = isDrawnObject ? drawnObjects[layerId] : geojsonLayers[layerId];
+    if (layer) {
+        if (layer.setStyle) {
+            // Applies for vector shapes like polygons, lines, circles
+            layer.setStyle({color: color, fillColor: color});
+        } else if (layer instanceof L.Marker) {
+            // For markers, create a new icon with the selected color
+            var newIcon = createColoredIcon(color); // Implement this function based on your needs
+            layer.setIcon(newIcon);
+        }
+    } else {
+        console.error('Layer not found:', layerId);
+    }
+}
+
+function createColoredIcon(color) {
+    // Define your marker icon using Leaflet's API
+    // This example creates a simple circle marker
+    var circleIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: "<div style='background-color:" + color + ";' class='marker-pin'></div>",
+        iconSize: [30, 42],
+        iconAnchor: [15, 42]
+    });
+    return circleIcon;
+}
+
+
+function removeLayer(layerId, isDrawnObject) {
+            var layer = isDrawnObject ? drawnObjects[layerId] : geojsonLayers[layerId];
+            if (layer) {
+                map.removeLayer(layer);
+                if (isDrawnObject) {
+                    delete drawnObjects[layerId];
+                } else {
+                    delete geojsonLayers[layerId];
+                }
+                var listItem = document.getElementById('listItem_' + layerId);
+                listItem.parentNode.removeChild(listItem);
+            }
+        }
+
+
+
+    
+function openImageInOverlay(src) {
+    document.getElementById('fullscreenImage').src = src;
+    document.getElementById('imageOverlay').style.display = 'block';
+    event.stopPropagation(); // Prevent the map click event
+}
+
+function closeOverlay() {
+    document.getElementById('imageOverlay').style.display = 'none';
+}
+
+function submitForm() {
+    console.log("Publishing Baustelle...");
+
+    let combinedGeoJSON = {
+        type: "FeatureCollection",
+        features: []
+    };
+
+    // Log and add features from geojsonLayers
+    Object.keys(geojsonLayers).forEach(layerId => {
+        geojsonLayers[layerId].eachLayer(innerLayer => {
+            let feature = innerLayer.toGeoJSON();
+            combinedGeoJSON.features.push(feature);
+            console.log(`Exporting GeoJSON Layer: ${layerId}, Color: ${innerLayer.options.color || 'default'}`);
+        });
+    });
+
+    // Log and add features from drawnObjects
+    Object.keys(drawnObjects).forEach(layerId => {
+        let feature = drawnObjects[layerId].toGeoJSON();
+        combinedGeoJSON.features.push(feature);
+        let color = drawnObjects[layerId].options.color || 'default';
+        console.log(`Exporting Drawn Object: ${layerId}, Type: ${feature.geometry.type}, Color: ${color}`);
+    });
+
+    var formData = new FormData(document.getElementById("baustelleForm"));
+    formData.append("gis_data", JSON.stringify(combinedGeoJSON));
+
+    fetch('/admin/neuebaustelle', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.message);
+        if(data.status === 'success' && data.baustelleId) {
+            alert("Baustelle successfully published!");
+            window.location.href = `/baustellen/${data.baustelleId}`;
+        } else {
+            alert("Failed to publish Baustelle. Please try again.");
+            console.error('Redirect failed. Baustelle ID is undefined.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("An error occurred. Please try again.");
+    });
+}
+
+      function openOverlay(imageSrc) {
+            document.getElementById('fullscreenImage').src = imageSrc;
+            document.getElementById('imageOverlay').style.display = 'block';
+        }
+
+        // Function to close the overlay
+        function closeOverlay() {
+            document.getElementById('imageOverlay').style.display = 'none';
+        }
+
+    </script>
+</body>
+</html>
+

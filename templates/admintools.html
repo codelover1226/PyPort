@@ -27,18 +27,22 @@
       </a>
       <button id="hamburger-button">&#9776;</button>
       <div id="nav-overlay" class="nav-overlay">
-        <div id="nav-links">
-          <a href="/karte">Karte</a>
-          <a href="/list">Projektvorschläge</a>
-          <a href="/neuerbeitrag">Vorschlag hinzufügen</a>
-          <a href="/ueber">Über</a>
-          <a href="/profil">Profil</a> {% if current_user.is_authenticated %} <span class="user-info" style="margin-top: 10px;"> Admin: {{ current_user.name }}, ID: {{ current_user.id }}
-          </span>
-          <a href="{{ url_for('logout', next=request.path) }}">
-            <button class="button">Abmelden</button>
-          </a> {% else %} <a href="{{ url_for('login', next=request.path) }}">
-            <button class="button">Anmelden</button>
-          </a> {% endif %}
+         <div id="nav-links">
+		 {% if newest_baustelle_id %}
+                <a href="/baustellen/{{ newest_baustelle_id }}">Feedback</a>
+            {% endif %}
+            <a href="/karte">Karte</a>
+            <a href="/list">Projektvorschläge</a>
+            <a href="/neuerbeitrag">Vorschlag hinzufügen</a>
+            <a href="/ueber">Über</a>
+            <a href="/profil">Profil</a>
+           
+            {% if current_user.is_authenticated %}
+                <span class="user-info" style="margin-top: 10px;">Admin: {{ current_user.name }}</span>
+                <a href="{{ url_for('logout', next=request.path) }}"><button class="button">Abmelden</button></a>
+            {% else %}
+                <a href="{{ url_for('login', next=request.path) }}"><button class="button">Anmelden</button></a>
+            {% endif %}
         </div>
       </div>
     </div>
@@ -53,7 +57,10 @@
       <button id="toggleImportantProjects" class="c-button" data-section-id="importantProjectsSection">Markierte Projektvorschläge</button>
       <button id="toggleReportedProjects" class="c-button" data-section-id="reportedProjectsSection">Gemeldete Projektvorschläge</button>
       <button id="toggleFeaturedProjects" class="c-button" data-section-id="featuredProjectsSection" style="display:none;">Open Ausgewählte Projektvorschläge</button>
+	        <button id="toggleQuestions" class="c-button" data-section-id="questionsSection">Fragen</button>
+				        <button id="toggleBaustellen" class="c-button" data-section-id="baustellenSection">Baustellen</button>
       <button id="toggleUsers" class="c-button" data-section-id="usersSection">Benutzer</button>
+	  
     </div>
     <div id="filter-overlay" class="nav-overlay" style="display:none">
       <div id="nav-links">
@@ -64,6 +71,8 @@
         <a href="#" id="toggleComments" class="c-button" data-section-id="commentsSection">Kommentare</a>
         <a href="#" id="toggleImportantProjects" class="c-button" data-section-id="importantProjectsSection">Markierte Projektvorschläge</a>
         <a href="#" id="toggleFeaturedProjects" class="c-button" data-section-id="featuredProjectsSection" style="display:none;">Open Ausgewählte Projektvorschläge</a>
+		        <a href="#" id="toggleQuestions" class="c-button" data-section-id="questionsSection">Fragen</a>
+						        <a href="#" id="toggleBaustellen" class="c-button" data-section-id="baustellenSection">Baustellen</a>
         <a href="#" id="toggleUsers" class="c-button" data-section-id="usersSection">Benutzer</a>
       </div>
     </div>
@@ -296,6 +305,31 @@
           </form>
         </div>
         <div class="stat-box2">
+          <h2>Projektdaten exportieren (.xlsx / .csv)</h2>
+          <form id="exportForm" method="POST" action="{{ url_for('export_projects') }}">
+            <div class="filter-options">
+              <!-- Category Selection -->
+              <div>
+                <label for="category">Wählen Sie eine Kategorie:</label>
+                <select id="category" name="category">
+                  <option value="">Alle Kategorien</option>
+                  <!-- Populate with actual categories -->
+                </select>
+                <button type="submit" class="register-button" onclick="submitExportForm()">.xlsx exportieren</button>
+              </div>
+            </div>
+            <!-- Date Filters -->
+            <!-- Submit Button -->
+          </form>
+          <form action="{{ url_for('export_csv') }}" method="get" style="margin-bottom:10px">
+            <label for="category">Wählen Sie eine Kategorie:</label>
+            <select id="category" name="category">
+              <option value="">Alle Kategorien</option> {% for category in categories %} <option value="{{ category }}">{{ category }}</option> {% endfor %}
+            </select>
+            <button type="submit" class="register-button">.csv exportieren</button>
+          </form>
+        </div>
+        <div class="stat-box2">
           <h2>Alle Beiträge löschen</h2>
           <p>Achtung: Dadurch werden alle Beiträge dauerhaft aus der Datenbank gelöscht.</p>
           <form method="POST" action="{{ url_for('delete_all_projects') }}">
@@ -305,6 +339,7 @@
       </div>
     </div>
     <div id="projectProposalsSection" style="display: none;">
+
       <h2>Es gibt <span id="num-projects" style="color: #003056;">{{ project_count }} Projektvorschläge.</span>
       </h2>
       <div style="margin-bottom:-5px; margin-top: -20px;">
@@ -429,6 +464,21 @@
           <a href="{{ url_for('project_details', project_id=project.id) }}" class="register-button" target="_blank">Anzeigen</a>
         </div> {% else %} <p>Keine gemeldeten Projektvorschläge gefunden.</p> {% endfor %} </div>
     </div>
+	
+	
+	<div id="baustellenSection" style="display: none;">
+    {% include 'partials/baustellen_list_section.html' %}
+</div>
+
+
+		
+    <div id="questionsSection" style="display: none;">
+   {% include 'partials/question_list_section.html' %}
+
+        console.log("Debug: Loaded {{ questions|length }} questions.");
+	
+    </div>
+		   	  
     <div id="usersSection" style="display: none;">
       <h2>Es gibt <span id="num-map-objects" style="color: #003056;">{{ user_count }} Benutzer.</span>
       </h2>
@@ -961,6 +1011,12 @@ function updateCommentCountDisplay() {
     });
     document.getElementById('toggleUsers').addEventListener('click', function() {
       toggleSection('usersSection');
+    });
+	   document.getElementById('toggleQuestions').addEventListener('click', function() {
+      toggleSection('questionsSection');
+    });
+		   document.getElementById('toggleBaustellen').addEventListener('click', function() {
+      toggleSection('baustellenSection');
     });
     document.getElementById('toggleReportedProjects').addEventListener('click', function() {
       toggleSection('reportedProjectsSection');
@@ -2313,6 +2369,161 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
   </script>
+  
+<!-- Add this script at the bottom of admintools.html or in a separate JS file included in the page -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.submit-answer').forEach(button => {
+        button.addEventListener('click', function() {
+            const form = this.closest('form');
+            const questionId = form.getAttribute('data-question-id');
+            const answerText = form.querySelector('textarea[name="answer_text"]').value;
+
+            fetch(`/answer_question/${questionId}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({answer_text: answerText})
+            })
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    console.error('Error response:', data);
+                    throw new Error(data.error || 'Unknown error occurred');
+                }
+                return data;
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update UI with the new answer
+                    updateQuestionWithAnswer(questionId, answerText, new Date().toISOString());
+                    // Hide the form and button to prevent duplicate submissions
+                    form.style.display = 'none';
+                    alert('Question answered successfully');
+                } else {
+                    throw new Error(data.error || 'Failed to answer question');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(`Error answering question: ${error.message}`);
+            });
+        });
+    });
+});
+
+function updateQuestionWithAnswer(questionId, answerText, answerDate) {
+    const questionDiv = document.getElementById('question-' + questionId);
+    if (questionDiv) {
+        let answerDiv = questionDiv.querySelector('.answer');
+        if (!answerDiv) {
+            answerDiv = document.createElement('div');
+            answerDiv.classList.add('answer');
+            questionDiv.appendChild(answerDiv);
+        }
+        answerDiv.innerHTML = `<strong>Antwort:</strong> ${answerText}`;
+
+        let answerDateDiv = questionDiv.querySelector('.answer-date');
+        if (!answerDateDiv) {
+            answerDateDiv = document.createElement('div');
+            answerDateDiv.classList.add('answer-date');
+            questionDiv.appendChild(answerDateDiv);
+        }
+
+        // Correct the date formatting here to match the desired format
+        let formattedDate = new Date(answerDate).toLocaleString('de-DE', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        }).replace(',', ''); // Ensure consistent formatting
+
+        answerDateDiv.innerHTML = `<strong>Am:</strong> ${formattedDate}`;
+    }
+}
+
+</script>
+
+<script>
+function confirmDeleteQuestion(questionId) {
+    if (confirm('Möchten Sie diese Frage wirklich löschen?')) {
+        fetch(`/delete_question/${questionId}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Failed to delete question.');
+        })
+        .then(data => {
+            document.getElementById(`question-${questionId}`).remove();
+            // Update the questions count
+            updateQuestionsCount();
+            alert('Frage erfolgreich gelöscht.');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Fehler beim Löschen der Frage.');
+        });
+    }
+}
+
+function updateQuestionsCount() {
+    const debugCountElement = document.getElementById('questions-count');
+    if (debugCountElement) {
+        // Assuming you have a way to get the updated count, for demonstration assuming it's through an API or stored in JS variable
+        const updatedCount = document.querySelectorAll('.stat-box2').length;
+        debugCountElement.innerText = `Debug: XD ${updatedCount} questions.`;
+    } else {
+        console.error("Failed to find the count element.");
+    }
+}
+
+
+document.getElementById('partial-container').addEventListener('click', function(event) {
+    if (event.target.classList.contains('delete-question')) {
+        const questionId = event.target.dataset.questionId;
+        confirmDeleteQuestion(questionId);
+    }
+});
+
+</script>
+
+<script>
+function confirmDeleteBaustelle(baustelleId) {
+    if (confirm('Möchten Sie diese Baustelle wirklich löschen?')) {
+        fetch(`/delete_baustelle/${baustelleId}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Failed to delete baustelle.');
+        })
+        .then(data => {
+            document.getElementById(`baustelle-${baustelleId}`).remove();
+            // Update the baustellen count
+            updateBaustellenCount();
+            alert('Baustelle erfolgreich gelöscht.');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Fehler beim Löschen der Baustelle.');
+        });
+    }
+}
+
+function updateBaustellenCount() {
+    const baustellenContainer = document.getElementById('baustellen-list-container');
+    const baustellen = baustellenContainer.querySelectorAll('.stat-box2');
+    const debugCountElement = document.getElementById('baustellen-count');
+    debugCountElement.innerHTML = `Baustellen: ${baustellen.length}`;
+}
+</script>
+
   <script>
     fetch('/log_view').then(response => response.json()).then(data => console.debug(data.message)).catch(console.error);
   </script>

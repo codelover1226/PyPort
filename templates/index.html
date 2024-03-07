@@ -1,4 +1,5 @@
-{% extends '/base.html' %}
+{% extends 'base.html' %}
+{{ current_user.is_authenticated }}
 
 {% block head_section %} 
 <title>Stimmungskompass DEMO</title>
@@ -92,6 +93,8 @@
     <p style="text-align: center;">Keine hervorgehobenen Projekte gefunden.</p>
     {% endif %} 
 </div>
+
+
 <!-- This div extends the background color -->
 {% endblock %}
 
