@@ -306,7 +306,7 @@
         </div>
         <div class="stat-box2">
           <h2>Projektdaten exportieren (.xlsx / .csv)</h2>
-          <form id="exportForm" method="POST" action="{{ url_for('export_projects') }}">
+          <form id="exportForm" method="POST" action="{{ url_for('export_questions') }}">
             <div class="filter-options">
               <!-- Category Selection -->
               <div>
@@ -315,18 +315,11 @@
                   <option value="">Alle Kategorien</option>
                   <!-- Populate with actual categories -->
                 </select>
-                <button type="submit" class="register-button" onclick="submitExportForm()">.xlsx exportieren</button>
+                <button type="submit" class="register-button">.xlsx exportieren</button>
               </div>
             </div>
             <!-- Date Filters -->
             <!-- Submit Button -->
-          </form>
-          <form action="{{ url_for('export_csv') }}" method="get" style="margin-bottom:10px">
-            <label for="category">Wählen Sie eine Kategorie:</label>
-            <select id="category" name="category">
-              <option value="">Alle Kategorien</option> {% for category in categories %} <option value="{{ category }}">{{ category }}</option> {% endfor %}
-            </select>
-            <button type="submit" class="register-button">.csv exportieren</button>
           </form>
         </div>
         <div class="stat-box2">
@@ -473,7 +466,7 @@
 
 		
     <div id="questionsSection" style="display: none;">
-   {% include 'partials/question_list_section.html' %}
+      {% include 'partials/question_list_section.html' %}
 
         console.log("Debug: Loaded {{ questions|length }} questions.");
 	

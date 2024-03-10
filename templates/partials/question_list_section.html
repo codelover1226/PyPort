@@ -1,6 +1,25 @@
 <!-- templates/partials/question_list_section.html -->
 <h2 id="questions-count">Debug: XD {{ questions|length }} questions.</h2>
-
+{% set total_count = 0 %}
+{% set answered_count = 0 %}
+{% set unanswered_count = 0 %}
+{% for question in questions %}
+    {# Debugging: Print out each question's answered status #}
+    {{ question.answered }}
+    {% if question.answered %}
+        {% set answered_count = answered_count + 1 %}
+    {% else %}
+        {% set unanswered_count = unanswered_count + 1 %}
+    {% endif %}
+    {% set total_count = total_count + 1 %}
+{% endfor %}
+<p>
+</p>
+<div>
+    <p>"There are {{ questions|length }} of questions.</p>    
+    <p>Antwortete Fragen: {{ answered_count }} of questions have been answered.</p>
+    <p>Unbeantwortete Fragen: {{ unanswered_count }} of question are unanswered</p>
+</div>
 <div class="stats-container2" id="question-list-container">
     {% for question in questions %}
     <div class="stat-box2" id="question-{{ question.id }}">

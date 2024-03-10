@@ -103,7 +103,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project_voting.db"
 app.config[
     "UPLOAD_FOLDER"
 ] = "static/usersubmissions"  # Specify the folder where uploaded files will be saved
-
+app.config['GEOJSON_FOLDER'] = 'static/usersubmissions/geojson'
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -204,21 +204,31 @@ def neuebaustelle():
         name = request.form.get('name')
         description = request.form.get('description')
         gis_data_str = request.form.get('gis_data')
+        gisfiles = request.form.get('gisfiles')
+        for file in request.files.getlist('gis_data[]'):
+            app.logger.debug(file)
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['GEOJSON_FOLDER'], filename))
         gis_data = json.loads(gis_data_str) if gis_data_str else None
         image = request.files.get('projectImage')
         image_path = None
         if image and image.filename:
             filename = secure_filename(image.filename)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image_path = os.path.join(filename)
             image.save(image_path)
 
-        new_baustelle = Baustelle(name=name, description=description, gis_data=gis_data, author="Author Name", image=image_path)
+        new_baustelle = Baustelle(name=name, description=description, gis_data=gis_data, gisfile=gisfiles, author="Author Name", image=image_path)
         db.session.add(new_baustelle)
         db.session.commit()
 
-        return jsonify({'status': 'success', 'message': 'Baustelle created successfully.', 'baustelleId': new_baustelle.id})
+        return jsonify({'status': 'success', 'message': 'Baustelle created successfully.','gisfile':gisfiles, 'baustelleId': new_baustelle.id})
     else:
-        return render_template('admin/neuebaustelle.html')
+        return render_template('neuebaustelle.html')
+def allowed_file(filename):
+    # Implement your file validation logic here
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+ALLOWED_EXTENSIONS = {'geojson'}
+
 
         
 @app.route('/baustellen/<int:baustelle_id>', methods=['GET', 'POST'])
@@ -824,11 +834,99 @@ def export_csv():
 @app.route("/export_questions", methods=["GET", "POST"])
 def export_questions():
     try:
-        category = request.values.get("category")
-        app.logger.info(category)
-        if category:
-            query = query.filter_by(category=category)
-        return jsonify({"states": "str"})
+        questions = Question.query.all()
+        app.logger.info(questions)
+        questions_data = []
+        for question in questions:
+            app.logger.info(question)
+            question_dict = question.to_dict()
+            questions_data.append(question_dict)
+        df = pd.DataFrame(questions_data)
+        rename_columns = {
+            "id": "ID",
+            "text": "Text",
+            "author": "Author",
+            "date": "Date",
+            "answer_text": "Answer Text",
+            "answered": "Answered",
+            "baustelle_id": "Baustelle ID",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "answer_date":"Answer Date"
+        }
+        df = df.rename(columns=rename_columns)[
+            list(rename_columns.values())
+        ]  # Reorder columns
+        app.logger.info(df.to_json)
+        app.logger.info(questions)
+
+
+        filename = "exported_questions.xlsx"
+        filepath = os.path.join("static/excel", filename)
+        writer = pd.ExcelWriter(filepath, engine="openpyxl")
+        df.to_excel(writer, index=False, sheet_name="Exported Projects")
+        workbook = writer.book
+        worksheet = writer.sheets["Exported Projects"]
+        
+        # Medium border style
+        medium_border_side = Side(border_style="medium", color="000000")
+        medium_border = Border(top=medium_border_side, bottom=medium_border_side)
+
+        font_size = 12
+        bahnschrift_font = Font(name="Bahnschrift", size=font_size)
+        
+        header_font = Font(
+            name="Bahnschrift", bold=True, color="F5F1E4", size=font_size + 2
+        ) 
+        header_fill = PatternFill(
+            start_color="003056", end_color="003056", fill_type="solid"
+        )
+        
+        for row in worksheet.iter_rows(
+            min_row=2, min_col=2, max_col=2
+        ):  # Kategorie is the 2nd column
+            for cell in row:
+                cell.font = Font(name="Bahnschrift", size=12, bold=True)
+
+        for row in worksheet.iter_rows():
+            for cell in row:
+                cell.font = bahnschrift_font  # Set font for all cells
+                cell.border = medium_border  # Set medium border for all cells
+                if cell.row == 1:
+                    cell.font = header_font  # Override font for the first row
+                    cell.fill = header_fill  # Apply fill for the first row
+                    cell.alignment = Alignment(horizontal="center", vertical="center")
+
+
+        colors = ["F5F1E4", "D9D4C7"]
+
+        for i, column_cells in enumerate(worksheet.columns):
+            color_index = i % len(colors)  # Alternate between 0 and 1
+            fill = PatternFill(
+                start_color=colors[color_index],
+                end_color=colors[color_index],
+                fill_type="solid",
+            )
+            for cell in column_cells[1:]:  # Skip the first row
+                cell.fill = fill
+                cell.alignment = Alignment(wrap_text=True)
+
+        # Adjust column widths based on the longest content
+        max_char_length = 50
+        for column_cells in worksheet.columns:
+            length = max(len(str(cell.value)) for cell in column_cells)
+            length = min(length, max_char_length)  # Limit to max_char_length characters
+            col_width = length * 1.3  # Approximate column width
+            column_letter = get_column_letter(column_cells[0].column)
+            worksheet.column_dimensions[column_letter].width = col_width
+        
+            # Pie Chart for Project Categories
+        start_row_for_charts = df.shape[0] + 3
+        writer._save()
+        app.logger.debug(f"Excel file with pie charts saved at {filepath}")
+        return jsonify({"states": filepath})
+    
+
     except Exception as e:
         print("Error:", str(e))  # More detailed error logging
         return jsonify({"error": str(e)}), 500
@@ -2552,7 +2650,6 @@ def admintools():
     project_count = Project.query.filter_by(is_mapobject=False).count()
     mapobject_count = Project.query.filter_by(is_mapobject=True).count()
     bookmark_count = Bookmark.query.count()
-    
     # Check if it's an AJAX request
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         request_type = request.args.get("request_type")
@@ -2577,6 +2674,7 @@ def admintools():
                 "partials/user_list_section.html", paginated_users=paginated_users, metaData=metaData,
             )
     # Normal request
+    
     return render_template(
         "admintools.html",
         paginated_projects=paginated_projects,
@@ -3492,14 +3590,17 @@ def update_baustelle(baustelle_id):
     db.session.commit()
     return jsonify({"success": "Baustelle updated successfully.", "baustelleId": baustelle.id})
 
-
 @app.route("/edit_baustelle/<int:baustelle_id>", methods=["GET"])
 @login_required
 def edit_baustelle(baustelle_id):
     baustelle = Baustelle.query.get_or_404(baustelle_id)
+    gisfilelist = json.loads(baustelle.gisfile) if baustelle.gisfile else []
+    gisfilenamelist = []
+    for gisfile in gisfilelist:
+        gisfilenamelist.append(os.path.join(app.config['GEOJSON_FOLDER'], gisfile))
+    app.logger.debug(gisfilenamelist)
     gis_data_json = json.dumps(baustelle.gis_data) if baustelle.gis_data else 'null'
-    return render_template("admin/neuebaustelle.html", baustelle=baustelle, gis_data_json=gis_data_json, edit_mode=True, baustelle_id=baustelle_id)
-
+    return render_template("admin/neuebaustelle.html", baustelle=baustelle, gis_data_json=gis_data_json, edit_mode=True, baustelle_id=baustelle_id, gisfilelist=gisfilelist, gisfilenamelist=gisfilenamelist)
 
 
 @app.route("/update_project_data/<int:project_id>", methods=["POST"])

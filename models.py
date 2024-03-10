@@ -107,6 +107,7 @@ class Baustelle(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(300), nullable=True)
     gis_data = db.Column(db.JSON)  # Storing GeoJSON data
+    gisfile = db.Column(db.String(20), nullable=True)  # Storing GeoJSON data
     author = db.Column(db.String(100), nullable=True)  # Optional author name
     date = db.Column(db.DateTime, default=datetime.utcnow)
     questions = db.relationship('Question', backref='baustelle', lazy=True, cascade="all, delete-orphan")
@@ -128,10 +129,23 @@ class Question(db.Model):
     longitude = db.Column(db.Float)
     answer_date = db.Column(db.DateTime)  # New field for answer date
 
-
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "text": self.text,
+            "author": self.author,
+            "date": self.date,
+            "answer_text": self.answer_text,
+            "answered": self.answered,
+            "baustelle_id": self.baustelle_id,
+            "longitude": self.longitude,
+            "latitude": self.latitude,
+            "answer_date": self.answer_date
+        }
 
     def __repr__(self):
         return f'<Question {self.id}>'
+
 
 
 class GeoJSONFeature(db.Model):
