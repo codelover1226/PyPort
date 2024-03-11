@@ -104,6 +104,7 @@ app.config[
     "UPLOAD_FOLDER"
 ] = "static/usersubmissions"  # Specify the folder where uploaded files will be saved
 app.config['GEOJSON_FOLDER'] = 'static/usersubmissions/geojson'
+app.config['BAUSTELLE_IMAGE_FOLDER'] = 'static/baustellepics'
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -212,12 +213,15 @@ def neuebaustelle():
         gis_data = json.loads(gis_data_str) if gis_data_str else None
         image = request.files.get('projectImage')
         image_path = None
+        imagename = None
         if image and image.filename:
             filename = secure_filename(image.filename)
-            image_path = os.path.join(filename)
+            imagename = filename
+            image_path = os.path.join(app.config['BAUSTELLE_IMAGE_FOLDER'],filename)
+            app.logger.debug(image_path)
             image.save(image_path)
 
-        new_baustelle = Baustelle(name=name, description=description, gis_data=gis_data, gisfile=gisfiles, author="Author Name", image=image_path)
+        new_baustelle = Baustelle(name=name, description=description, gis_data=gis_data, gisfile=gisfiles, author="Author Name", image=imagename)
         db.session.add(new_baustelle)
         db.session.commit()
 
@@ -242,6 +246,9 @@ def baustellen(baustelle_id):
 
     # Retrieve the specified Baustelle by its ID
     baustelle = Baustelle.query.get_or_404(baustelle_id)
+    gisfile = baustelle.gisfile
+    gis_data = baustelle.gis_data
+    image = baustelle.image
 
     # Handle POST request: Adding a new question to the Baustelle
     if request.method == 'POST':
@@ -262,7 +269,7 @@ def baustellen(baustelle_id):
     # For a GET request or after handling the POST request, render the Baustelle page
     # Retrieve all questions associated with this Baustelle
     questions = Question.query.filter_by(baustelle_id=baustelle_id).all()
-    return render_template('baustellen.html', baustelle=baustelle, is_admin=is_admin, user_id=user_id, questions=questions)
+    return render_template('baustellen.html', baustelle=baustelle, is_admin=is_admin, user_id=user_id, questions=questions,gisfile=gisfile, gis_data=gis_data)
 
 
 
@@ -2453,7 +2460,8 @@ def admintools():
 
     # Load questions and other data for GET requests and for rendering after POST
     questions = Question.query.all()
-    
+    answered_questions_count = Question.query.filter_by(answered=True).count()
+    unanswered_questions_count = Question.query.filter_by(answered=False).count()
     print(f"Loaded {len(questions)} questions")  # Console debug log
     
     questions = Question.query.order_by(Question.date.desc()).all()  # Default: newest first
@@ -2701,6 +2709,9 @@ def admintools():
         questions=questions,
         question_sort=question_sort,
         baustellen=baustellen,  
+        answered_questions_count = answered_questions_count,
+        unanswered_questions_count = unanswered_questions_count
+
         # metaData=metaData,
     )
 
@@ -2790,9 +2801,6 @@ def delete_map_object(map_object_id):
 @login_required
 def verify_admin_otp():
     # Ensure the user is an admin
-    session["admin_verified"] = True
-    flash("OTP Verified. Access granted to admin tools.", "success")
-    return redirect(url_for("admintools"))
     if current_user.id != 1:
         flash("Access Denied: You are not authorized to perform this action.", "danger")
         return redirect(url_for("index"))

@@ -2782,7 +2782,6 @@
                  reader.readAsText(f);
              }
          }
-         
          // Update the list of loaded GeoJSON files.
          var editableLayers = new L.FeatureGroup();
                  map.addLayer(editableLayers);
@@ -2809,17 +2808,17 @@
          });
          map.addControl(drawControl);
          
-          function createColoredMarker(feature, latlng) {
-             var geojsonMarkerOptions = {
-                 radius: 8,
-                 fillColor: feature.properties.color || "#ff7800", // Default color if not specified
-                 color: "#000",
-                 weight: 1,
-                 opacity: 1,
-                 fillOpacity: 0.8
-             };
-             return L.circleMarker(latlng, geojsonMarkerOptions);
-         }
+        function createColoredMarker(feature, latlng) {
+            var geojsonMarkerOptions = {
+                radius: 8,
+                fillColor: feature.properties.color || "#ff7800", // Default color if not specified
+                color: "#000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            };
+            return L.circleMarker(latlng, geojsonMarkerOptions);
+        }
          
          // Handle the creation of new layers
          map.on(L.Draw.Event.CREATED, function (e) {
@@ -2873,14 +2872,14 @@
              return popupContent;
          }
          
-         // Revised onEachFeature function
-         function onEachFeature(feature, layer) {
-             if (feature.properties) {
-                 var popupContent = Object.keys(feature.properties).map(function(k) {
-                     return k + ': ' + feature.properties[k];
-                 }).join('<br>');
-                 layer.bindPopup(popupContent);
-             }
+        // Revised onEachFeature function
+        function onEachFeature(feature, layer) {
+            if (feature.properties) {
+                var popupContent = Object.keys(feature.properties).map(function(k) {
+                    return k + ': ' + feature.properties[k];
+                }).join('<br>');
+                layer.bindPopup(popupContent);
+            }
          }
          
           function addToList(name, layerId, isDrawnObject) {
